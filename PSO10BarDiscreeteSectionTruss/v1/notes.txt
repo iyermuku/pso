@@ -1,0 +1,161 @@
+# Robust (unchanged behavior): identical plots as before
+python main.py --mode robust --num_runs 5 --iters 100 --swarm 20 --max_restarts 2 --stall_window 20
+INFO === BEST FEASIBLE ACROSS SEEDS === seed=2123 particle=2 mass=5490.737892 lbm max_disp=1.998943 in max_stress=14.196928 ksi w=0.729800 c1=2.050000 c2=2.050000
+
+Threshold attainment (best feasible mass plot):
+  80% reached at iteration 7
+  95% reached at iteration 23
+  99.7% reached at iteration 148
+=== PSO (robust lbest) with seeds & restarts ===
+Chosen seed (best feasible across seeds): 2123
+Best parameters (gbest snapshot): w = 0.7298, c1 = 2.0500, c2 = 2.0500
+Best mass (gbest snapshot): 5490.74 lbm
+Best max U (gbest snapshot): 1.998943 in -> FEASIBLE
+Optimal areas (in^2) from chosen run:
+ A[1] = 33.500000
+ A[2] = 1.620000
+ A[3] = 22.900000
+ A[4] = 14.200000
+ A[5] = 1.620000
+ A[6] = 1.620000
+ A[7] = 7.970000
+ A[8] = 22.900000
+ A[9] = 22.000000
+ A[10] = 1.620000
+Plots saved: pso_best_mass_vs_iteration.png, pso_best_max_disp_vs_iteration.png, pso_best_feasibility_history.png
+--- Best-ever objective solution (over entire run; chosen run) ---
+w = 0.729800, c1 = 2.050000, c2 = 2.050000
+Mass = 5490.737892 lbm; Max displacement = 1.998943 in; J = 5490.737892
+Areas (in^2):
+ A[1] = 33.500000
+ A[2] = 1.620000
+ A[3] = 22.900000
+ A[4] = 14.200000
+ A[5] = 1.620000
+ A[6] = 1.620000
+ A[7] = 7.970000
+ A[8] = 22.900000
+ A[9] = 22.000000
+ A[10] = 1.620000
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.729800, c1 = 2.050000, c2 = 2.050000
+Mass = 5490.737892 lbm; Max displacement = 1.998943 in; J = 5490.737892
+Areas (in^2):
+ A[1] = 33.500000
+ A[2] = 1.620000
+ A[3] = 22.900000
+ A[4] = 14.200000
+ A[5] = 1.620000
+ A[6] = 1.620000
+ A[7] = 7.970000
+ A[8] = 22.900000
+ A[9] = 22.000000
+ A[10] = 1.620000
+Member Stresses (ksi):
+ stresses[1] = 6.603156
+ stresses[2] = 1.106979
+ stresses[3] = -7.807611
+ stresses[4] = -6.915964
+ stresses[5] = 14.196928
+ stresses[6] = 1.106979
+ stresses[7] = 13.981423
+ stresses[8] = -7.485186
+ stresses[9] = 6.312965
+ stresses[10] = -1.565505
+INFO Stop timestamp: 2026-01-24 15:35:21
+INFO === PSO: STOP (elapsed 90.89 s) ===
+###############################################################
+# Single-run mode: identical plots + parameter evolution figure
+python main.py --mode single --num_runs 5 --iters 100 --swarm 20 --max_restarts 2 --stall_window 20
+INFO === BEST FEASIBLE ACROSS SEEDS === seed=2123 particle=2 mass=5490.737892 lbm max_disp=1.998943 in max_stress=14.196928 ksi w=0.464629 c1=1.032019 c2=1.618112
+
+Threshold attainment (best feasible mass plot):
+  80% reached at iteration 5
+  95% reached at iteration 29
+  99.7% reached at iteration 177
+Additional plot saved: pso_single_params_vs_iteration.png
+=== PSO (robust lbest) with seeds & restarts ===
+Chosen seed (best feasible across seeds): 2123
+Best parameters (gbest snapshot): w = 0.4651, c1 = 1.0143, c2 = 1.6534
+Best mass (gbest snapshot): 5490.74 lbm
+Best max U (gbest snapshot): 1.998943 in -> FEASIBLE
+Optimal areas (in^2) from chosen run:
+ A[1] = 33.500000
+ A[2] = 1.620000
+ A[3] = 22.900000
+ A[4] = 14.200000
+ A[5] = 1.620000
+ A[6] = 1.620000
+ A[7] = 7.970000
+ A[8] = 22.900000
+ A[9] = 22.000000
+ A[10] = 1.620000
+Plots saved: pso_best_mass_vs_iteration.png, pso_best_max_disp_vs_iteration.png, pso_best_feasibility_history.png
+--- Best-ever objective solution (over entire run; chosen run) ---
+w = 0.464629, c1 = 1.032019, c2 = 1.618112
+Mass = 5490.737892 lbm; Max displacement = 1.998943 in; J = 5490.737892
+Areas (in^2):
+ A[1] = 33.500000
+ A[2] = 1.620000
+ A[3] = 22.900000
+ A[4] = 14.200000
+ A[5] = 1.620000
+ A[6] = 1.620000
+ A[7] = 7.970000
+ A[8] = 22.900000
+ A[9] = 22.000000
+ A[10] = 1.620000
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.464629, c1 = 1.032019, c2 = 1.618112
+Mass = 5490.737892 lbm; Max displacement = 1.998943 in; J = 5490.737892
+Areas (in^2):
+ A[1] = 33.500000
+ A[2] = 1.620000
+ A[3] = 22.900000
+ A[4] = 14.200000
+ A[5] = 1.620000
+ A[6] = 1.620000
+ A[7] = 7.970000
+ A[8] = 22.900000
+ A[9] = 22.000000
+ A[10] = 1.620000
+Member Stresses (ksi):
+ stresses[1] = 6.603156
+ stresses[2] = 1.106979
+ stresses[3] = -7.807611
+ stresses[4] = -6.915964
+ stresses[5] = 14.196928
+ stresses[6] = 1.106979
+ stresses[7] = 13.981423
+ stresses[8] = -7.485186
+ stresses[9] = 6.312965
+ stresses[10] = -1.565505
+INFO Stop timestamp: 2026-01-24 15:28:15
+INFO === PSO: STOP (elapsed 163.11 s) ===
+C:\Users\mukun\Documents\pso\codes\PSO10BarDiscreteSectionsTruss\v1>python test_trussv3.py 33.5 1.62 22.9 14.2 1.62 1.62 7.97 22.9 22.0 1.62
+INPUT
+Areas (in^2) [m01..m10]: [33.5, 1.62, 22.9, 14.2, 1.62, 1.62, 7.97, 22.9, 22.0, 1.62]
+
+RESULTS
+Member axial stresses (ksi):
+ m01 (5-3):  6.603156
+ m02 (3-1):  1.106979
+ m03 (6-4): -7.807611
+ m04 (4-2): -6.915964
+ m05 (3-4):  14.196928
+ m06 (1-2):  1.106979
+ m07 (5-4):  13.981423
+ m08 (6-3): -7.485186
+ m09 (3-2):  6.312965
+ m10 (4-1): -1.565505
+
+Nodal displacements (in):
+ node 1: ux =  0.277565, uy = -1.959092
+ node 2: ux = -0.530049, uy = -1.998943
+ node 3: ux =  0.237714, uy = -0.776647
+ node 4: ux = -0.281074, uy = -1.287736
+ node 5: ux =  0.000000, uy =  0.000000
+ node 6: ux =  0.000000, uy =  0.000000
+
+Total structural mass (lbm): 5490.737892
+***********************************************************
