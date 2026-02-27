@@ -46,7 +46,8 @@ def multimodal_15_12(x: np.ndarray) -> float:
         The value of the objective function (to be maximized).
     """
     x = np.asarray(x, dtype=float)
-    s1 = np.sum(x)
+    # use sum of absolute values rather than plain sum
+    s1 = np.sum(np.abs(x))
     s2 = np.sum(np.sin(x**2))
     return s1 * np.exp(-s2)
 

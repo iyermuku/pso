@@ -3,6 +3,7 @@
 from michaelewicz_pso import pso_minimize, michaelewicz
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider, Button
 
 
 def run_michaelewicz_optimization():
@@ -30,6 +31,7 @@ def run_michaelewicz_optimization():
     
     # scatter initial and final particle locations
     Xhist = history["X_history"]  # shape (iters+1, swarm, 2)
+    gbest_X_hist = history["gbest_X_history"]
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
     axes[0].scatter(Xhist[0, :, 0], Xhist[0, :, 1], c="blue", alpha=0.6)
     axes[0].set_title("Initial particle positions")
@@ -52,6 +54,105 @@ def run_michaelewicz_optimization():
     fig.savefig("particle_positions.png", dpi=100)
     print("Saved: particle_positions.png")
     plt.show()
+
+    # 3D surface view with per-iteration controls
+    # Lets the user step through iterations and inspect particle locations.
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+
+    fig3 = plt.figure(figsize=(10, 7))
+    ax3 = fig3.add_subplot(111, projection="3d")
+    plt.subplots_adjust(bottom=0.2)
+
+    grid_n = 80
+    xs = np.linspace(bounds[0][0], bounds[0][1], grid_n)
+    ys = np.linspace(bounds[1][0], bounds[1][1], grid_n)
+    Xg, Yg = np.meshgrid(xs, ys)
+    Zg = np.array(
+        [
+            michaelewicz(np.array([x, y]), m=m)
+            for x, y in zip(Xg.ravel(), Yg.ravel())
+        ]
+    ).reshape(Xg.shape)
+
+    ax3.plot_surface(Xg, Yg, Zg, cmap="viridis", alpha=0.65, linewidth=0, antialiased=False)
+    z_pad = 0.05 * (float(np.max(Zg)) - float(np.min(Zg)))
+    ax3.set_zlim(float(np.min(Zg)) - z_pad, float(np.max(Zg)) + z_pad)
+    ax3.set_xlim(bounds[0])
+    ax3.set_ylim(bounds[1])
+    ax3.set_xlabel("x1")
+    ax3.set_ylabel("x2")
+    ax3.set_zlabel("f(x)")
+
+    iters_plus = Xhist.shape[0]
+    init_pts = Xhist[0]
+    init_z = [michaelewicz(pt, m=m) for pt in init_pts]
+    scat3 = ax3.scatter(init_pts[:, 0], init_pts[:, 1], init_z, c="red", s=24, alpha=0.9)
+    best_z0 = michaelewicz(gbest_X_hist[0], m=m)
+    best3, = ax3.plot(
+        [gbest_X_hist[0, 0]],
+        [gbest_X_hist[0, 1]],
+        [best_z0],
+        marker="*",
+        markersize=14,
+        color="gold",
+        markeredgecolor="black",
+    )
+
+    def set_frame(frame):
+        pts = Xhist[frame]
+        zs = [michaelewicz(pt, m=m) for pt in pts]
+        scat3._offsets3d = (pts[:, 0], pts[:, 1], zs)
+        gbest = gbest_X_hist[frame]
+        gbest_z = michaelewicz(gbest, m=m)
+        best3.set_data_3d([gbest[0]], [gbest[1]], [gbest_z])
+        ax3.set_title(
+            f"Michaelewicz surface - iteration {frame}/{iters_plus - 1} "
+            f"(best={history['gbest_history'][frame]:.6f})"
+        )
+        fig3.canvas.draw_idle()
+
+    set_frame(0)
+
+    slider_ax = fig3.add_axes([0.15, 0.08, 0.7, 0.03])
+    iter_slider = Slider(
+        slider_ax,
+        "Iter",
+        0,
+        iters_plus - 1,
+        valinit=0,
+        valstep=1,
+    )
+
+    prev_ax = fig3.add_axes([0.03, 0.06, 0.08, 0.06])
+    next_ax = fig3.add_axes([0.88, 0.06, 0.08, 0.06])
+    prev_btn = Button(prev_ax, "Prev")
+    next_btn = Button(next_ax, "Next")
+
+    def _on_slider(val):
+        set_frame(int(val))
+
+    def _on_prev(_event):
+        new_val = max(0, int(iter_slider.val) - 1)
+        iter_slider.set_val(new_val)
+
+    def _on_next(_event):
+        new_val = min(iters_plus - 1, int(iter_slider.val) + 1)
+        iter_slider.set_val(new_val)
+
+    def _on_key(event):
+        if event.key == "left":
+            _on_prev(None)
+        elif event.key == "right":
+            _on_next(None)
+
+    iter_slider.on_changed(_on_slider)
+    prev_btn.on_clicked(_on_prev)
+    next_btn.on_clicked(_on_next)
+    fig3.canvas.mpl_connect("key_press_event", _on_key)
+
+    fig3.savefig("surface_iteration.png", dpi=120)
+    print("Saved: surface_iteration.png")
+    plt.show()
     
     # plot gbest evolution
     plt.figure()
@@ -67,7 +168,6 @@ def run_michaelewicz_optimization():
     # create animation of particle movement with current global best highlighted
     from matplotlib.animation import FuncAnimation
     
-    gbest_X_hist = history["gbest_X_history"]
     iters_plus = Xhist.shape[0]
     fig2, ax2 = plt.subplots()
     scat = ax2.scatter(Xhist[0, :, 0], Xhist[0, :, 1], c="blue", alpha=0.6)

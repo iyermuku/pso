@@ -83,5 +83,40 @@ if __name__ == "__main__":
         anim.save("trajectory.gif", writer="pillow", fps=1000/anim_interval)
     plt.show()
 
+    # 3D surface animation: particles moving over function landscape
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+    fig3 = plt.figure()
+    ax3 = fig3.add_subplot(111, projection='3d')
+    # compute surface grid
+    grid_n = 50
+    xs = np.linspace(bounds[0][0], bounds[0][1], grid_n)
+    ys = np.linspace(bounds[1][0], bounds[1][1], grid_n)
+    Xg, Yg = np.meshgrid(xs, ys)
+    # evaluate function on each grid point
+    Zg = np.array([
+        multimodal_15_12(np.array([x, y]))
+        for x, y in zip(Xg.ravel(), Yg.ravel())
+    ]).reshape(Xg.shape)
+    ax3.plot_surface(Xg, Yg, Zg, cmap='viridis', alpha=0.6, linewidth=0, antialiased=False)
+    scat3 = ax3.scatter(Xhist[0, :, 0], Xhist[0, :, 1],
+                        [multimodal_15_12(pt) for pt in Xhist[0]], c='r')
+    ax3.set_xlabel('x1')
+    ax3.set_ylabel('x2')
+    ax3.set_zlabel('f(x)')
+
+    def _update3(frame):
+        pts = Xhist[frame]
+        zs = [multimodal_15_12(pt) for pt in pts]
+        scat3._offsets3d = (pts[:,0], pts[:,1], zs)
+        return scat3,
+
+    anim3 = FuncAnimation(fig3, _update3, frames=range(iters_plus), interval=anim_interval, blit=False)
+    try:
+        anim3.save('surface_trajectory.gif', writer='pillow', fps=1000/anim_interval)
+        print('Saved: surface_trajectory.gif')
+    except Exception:
+        pass
+    plt.show()
+
     test_2d_search()
     print("Test completed")
