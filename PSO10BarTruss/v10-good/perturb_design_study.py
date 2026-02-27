@@ -51,21 +51,26 @@ for idx in range(len(base_A)):
     weights = np.array(weights)
     stress_viol = np.array(stress_viol)
     disp_viol = np.array(disp_viol)
+    # convert to percentage deviations
+    base_mass = mass_from_A(base_A)
+    weights = (weights - base_mass) / base_mass * 100.0
+    stress_viol = stress_viol / stress_limit * 100.0
+    disp_viol = disp_viol / disp_limit * 100.0
 
     # plotting
     fig, ax_w = plt.subplots(figsize=(8, 5))
-    ax_w.plot(values, weights, marker='o', label='weight (mass)')
+    ax_w.plot(values, weights, marker='o', label='weight deviation (%)')
     ax_w.set_xlabel(var_name)
-    ax_w.set_ylabel('Weight (lbm)')
+    ax_w.set_ylabel('Weight deviation (%)')
     ax_w.grid(True, alpha=0.3)
 
     ax2 = ax_w.twinx()
     # plot stress violation as filled bars
     ax2.bar(values, stress_viol, width=(values[1]-values[0])*0.8, color='C1', alpha=0.3,
-            label='stress viol (ksi)')
+            label='stress violation (%)')
     # plot displacement violation as dashed line
-    ax2.plot(values, disp_viol, marker='^', color='C2', linestyle='--', label='disp viol (in)')
-    ax2.set_ylabel('Violation magnitude')
+    ax2.plot(values, disp_viol, marker='^', color='C2', linestyle='--', label='disp violation (%)')
+    ax2.set_ylabel('Violation (%)')
 
     # combine legends: weight on left, violations on right
     lines, labels = ax_w.get_legend_handles_labels()
