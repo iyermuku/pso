@@ -1,0 +1,34 @@
+The search space is bounded only by the discrete areas in available_A in truss72.python3
+Alter the 2 algorithms in pso72.py single_run_pso and robust_constriction_pso to accept only these areas.
+Snap to nearest area in this discrete set before computing areas.
+Make no other changes.
+
+
++++++++++++++++++++++++++++
+python3 pso72_main.py --mode single --iters 600 --swarm 60 --seeds 3
+w=0.749 c1=2.074 c2=1.582
+[INFO] === FINAL BEST SUMMARY ===Max displacement: 0.249643 in (allow eff 0.250000 in)Max member stress: 20.739267 ksi (allow eff 25.000000 ksi)
+Computed mass: 389.3342 lbmFinal 16 area group values (in^2):  
+A01 = 0.196000  A02 = 0.563000  A03 = 0.391000  A04 = 0.563000  A05 = 0.563000  A06 = 0.563000  A07 = 0.111000  A08 = 0.111000  
+A09 = 1.228000  A10 = 0.563000  A11 = 0.111000  A12 = 0.111000  A13 = 1.990000  A14 = 0.442000  A15 = 0.111000  A16 = 0.111000
+[INFO] Saved mass history plot: mass_history.png (best seed=1)
+[INFO] Saved parameter history plot: w_c_history.png (best seed=1)
+[INFO] Done.
+
+C:\Users\mukun\Documents\pso\codes\PSO72BarDiscreteSectionsTruss>python test_truss72.py 0.196 0.563 0.391 0.563 0.563 0.563 0.111 0.111 1.228 0.563 0.111 0.111 1.99 0.442 0.111 0.111
+Objective mass (lbm): 389.334170
+Load case 1: max |U| = 0.249643 in
+             max |sigma| = 13.320730 ksi; min = -13.320730 ksi
+Load case 2: max |U| = 0.217213 in
+             max |sigma| = 20.739267 ksi; min = -20.739267 ksi
+
+Sample displacements (LC1): node 1 U = [ 0.24964297  0.24964297 -0.05600486] ; node 2 U = [ 0.20913018  0.19715358 -0.02397675]
+
+**************************************
+robust
+[INFO] === FINAL BEST SUMMARY ===Max displacement: 0.249607 in (allow eff 0.250000 in)Max member stress: 20.751272 ksi (allow eff 25.000000 ksi)
+Computed mass: 389.3342 lbmFinal 16 area group values (in^2):  
+A01 = 0.196000  A02 = 0.563000  A03 = 0.391000  A04 = 0.563000  A05 = 0.563000  A06 = 0.563000  A07 = 0.111000  A08 = 0.111000  
+A09 = 1.228000  A10 = 0.442000  A11 = 0.111000  A12 = 0.111000  A13 = 1.990000  A14 = 0.563000  A15 = 0.111000  A16 = 0.111000
+[INFO] Saved mass history plot: mass_history.png (best seed=0)
+[INFO] Done.

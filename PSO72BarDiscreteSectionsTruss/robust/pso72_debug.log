@@ -1,0 +1,43 @@
+2026-01-24 21:52:52,971 INFO pso72 Starting PSO mode=robust iters=600 swarm=60 seeds=3
+2026-01-24 21:52:53,008 INFO pso72 [robust] seed=0, iters=600, swarm=60, c1=2.05, c2=2.05
+2026-01-24 21:52:53,008 DEBUG pso72 [robust] constriction chi=0.729844 (phi=4.100000)
+2026-01-24 21:52:53,297 INFO pso72 [robust] iter=1/600 J_best=2420.985396 mass=2420.9854 disp=0.180470 stress=7.310053
+2026-01-24 21:53:10,566 INFO pso72 [robust] iter=61/600 J_best=397.591318 mass=397.5913 disp=0.249207 stress=20.266520
+2026-01-24 21:53:22,117 INFO pso72 [robust] iter=121/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:22,813 INFO pso72 [robust] iter=181/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:22,935 INFO pso72 [robust] iter=241/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,036 INFO pso72 [robust] iter=301/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,147 INFO pso72 [robust] iter=361/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,258 INFO pso72 [robust] iter=421/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,370 INFO pso72 [robust] iter=481/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,479 INFO pso72 [robust] iter=541/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,577 INFO pso72 [robust] iter=600/600 J_best=389.334170 mass=389.3342 disp=0.249607 stress=20.751272
+2026-01-24 21:53:23,577 INFO pso72 [robust] seed=1, iters=600, swarm=60, c1=2.05, c2=2.05
+2026-01-24 21:53:23,577 DEBUG pso72 [robust] constriction chi=0.729844 (phi=4.100000)
+2026-01-24 21:53:23,858 INFO pso72 [robust] iter=1/600 J_best=1784.910636 mass=1784.9106 disp=0.146735 stress=5.711434
+2026-01-24 21:53:41,430 INFO pso72 [robust] iter=61/600 J_best=407.259863 mass=407.2599 disp=0.249443 stress=24.881915
+2026-01-24 21:53:55,844 INFO pso72 [robust] iter=121/600 J_best=394.291308 mass=394.2913 disp=0.249285 stress=24.827181
+2026-01-24 21:53:59,930 INFO pso72 [robust] iter=181/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,343 INFO pso72 [robust] iter=241/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,453 INFO pso72 [robust] iter=301/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,563 INFO pso72 [robust] iter=361/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,659 INFO pso72 [robust] iter=421/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,768 INFO pso72 [robust] iter=481/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,880 INFO pso72 [robust] iter=541/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,992 INFO pso72 [robust] iter=600/600 J_best=393.111604 mass=393.1116 disp=0.249888 stress=24.867760
+2026-01-24 21:54:00,992 INFO pso72 [robust] seed=2, iters=600, swarm=60, c1=2.05, c2=2.05
+2026-01-24 21:54:00,992 DEBUG pso72 [robust] constriction chi=0.729844 (phi=4.100000)
+2026-01-24 21:54:01,278 INFO pso72 [robust] iter=1/600 J_best=2904.488791 mass=2904.4888 disp=0.166568 stress=8.724301
+2026-01-24 21:54:18,937 INFO pso72 [robust] iter=61/600 J_best=405.429671 mass=405.4297 disp=0.247348 stress=20.279771
+2026-01-24 21:54:32,850 INFO pso72 [robust] iter=121/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:34,474 INFO pso72 [robust] iter=181/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:34,837 INFO pso72 [robust] iter=241/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:35,020 INFO pso72 [robust] iter=301/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:35,165 INFO pso72 [robust] iter=361/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:35,390 INFO pso72 [robust] iter=421/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:35,629 INFO pso72 [robust] iter=481/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:35,859 INFO pso72 [robust] iter=541/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:36,016 INFO pso72 [robust] iter=600/600 J_best=389.457874 mass=389.4579 disp=0.249603 stress=20.712838
+2026-01-24 21:54:36,025 INFO pso72 === FINAL BEST SUMMARY ===Max displacement: 0.249607 in (allow eff 0.250000 in)Max member stress: 20.751272 ksi (allow eff 25.000000 ksi)Computed mass: 389.3342 lbmFinal 16 area group values (in^2):  A01 = 0.196000  A02 = 0.563000  A03 = 0.391000  A04 = 0.563000  A05 = 0.563000  A06 = 0.563000  A07 = 0.111000  A08 = 0.111000  A09 = 1.228000  A10 = 0.442000  A11 = 0.111000  A12 = 0.111000  A13 = 1.990000  A14 = 0.563000  A15 = 0.111000  A16 = 0.111000
+2026-01-24 21:54:36,790 INFO pso72 Saved mass history plot: mass_history.png (best seed=0)
+2026-01-24 21:54:36,790 INFO pso72 Done.
