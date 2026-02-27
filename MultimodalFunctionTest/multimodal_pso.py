@@ -22,6 +22,16 @@ import numpy as np
 from typing import Callable, Tuple, Sequence
 
 
+def _lhs(n_samples: int, n_dim: int, rng: np.random.Generator):
+    """Latin Hypercube Sampling in [0,1]^n_dim; shuffle per dimension."""
+    U = rng.random((n_samples, n_dim))
+    grid = (np.arange(n_samples)[:, None] + U) / n_samples
+    samples = np.zeros_like(grid)
+    for j in range(n_dim):
+        samples[:, j] = rng.permutation(grid[:, j])
+    return samples
+
+
 def multimodal_15_12(x: np.ndarray) -> float:
     """Evaluate equation 15.12 of Yang (multimodal test function).
 
@@ -125,8 +135,9 @@ def pso_maximize(
     hi = np.array([b[1] for b in bounds], dtype=float)
     span = hi - lo
 
-    # initialize particle positions and velocities
-    X = lo + rng.random((swarm_size, n_dim)) * span
+    # initialize particle positions using Latin Hypercube Sampling
+    S01 = _lhs(swarm_size, n_dim, rng)
+    X = lo + S01 * span
     V = rng.uniform(-span, span, size=(swarm_size, n_dim))
 
     # personal bests
