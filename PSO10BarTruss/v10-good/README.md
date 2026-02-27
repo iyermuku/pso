@@ -1,26 +1,54 @@
-# PSO10BarTruss v10-good
+# Overview
+This project focuses on the PSO (Particle Swarm Optimization) algorithm applied to the Bar Truss problem. It aims to find the optimal design of a truss structure through simulation.
 
-This directory contains the PSO (Particle Swarm Optimization) implementation for the 10-Bar Truss optimization problem - version 10 (good).
+# Dependencies
+- Python 3.6 or higher
+- NumPy
+- Matplotlib
+- SciPy
 
-## Overview
+# Step-by-Step Setup
+1. **Clone the repository**  
+   To get started, clone the repository by running:
+   ```bash
+   git clone https://github.com/iyermuku/pso.git
+   cd pso/v10-good
+   ```
 
-The 10-Bar Truss is a classic structural optimization benchmark problem used in the field of computational mechanics. This implementation uses Particle Swarm Optimization to find optimal designs for the truss structure.
+2. **Create a virtual environment (optional)**  
+   It is recommended to create a virtual environment. You can create one using:
+   ```bash
+   python -m venv myenv
+   source myenv/bin/activate  # On Windows use `myenv\Scripts\activate`
+   ```
 
-## Contents
+3. **Install dependencies**  
+   Use pip to install the required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This folder includes:
-- PSO algorithm implementation for the 10-bar truss problem
-- Optimization code and utilities
-- Results and analysis files
+# Command-Line Arguments
+To run the PSO algorithm, use the following command:  
+```bash
+python pso.py --iterations <number_of_iterations> --population <population_size> --output <output_file>
+```
 
-## Usage
+| Argument         | Description                              |
+|------------------|------------------------------------------|
+| `--iterations`   | Number of iterations for the algorithm   |
+| `--population`    | Size of the swarm (number of particles) |
+| `--output`       | Name of the output file                  |
 
-[Add specific usage instructions for this version here]
+# Expected Output
+The expected output is a text file containing:
+- The best designs obtained  
+- Performance metrics of the run, including the best fitness values recorded.
 
-## Results
+# Runtime Information
+- Each run's duration can vary based on the parameters set, average runtime is approximately X minutes for Y iterations and Z population size.
 
-[Add information about the optimization results achieved by this version]
-
-## References
-
-For more information about the PSO project, see the main repository documentation.
+# Common Issues
+1. **ImportError**: Make sure all dependencies are correctly installed. Refer to the requirements.txt for the list of necessary packages.
+2. **FileNotFoundError**: Check if the output file path is correct or accessible.
+3. **Performance Degradation**: If you notice a slowdown, try reducing the population size or iterations.
