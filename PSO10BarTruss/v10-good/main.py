@@ -110,38 +110,41 @@ if res.get('best_feas_A', np.array([])).size > 0:
     plt.figure(figsize=(10, 6))
     mass_hist = np.array(res['mass_hist'], dtype=float)
     iters = np.arange(1, len(mass_hist)+1)
-    plt.plot(iters, mass_hist, label=f'Best feasible mass for particle {particle}', color='C0', lw=2)
+    plt.plot(iters, mass_hist, label=f'Best feasible weight (mass) for particle {particle}', color='C0', lw=2)
 
-    # Compute final best mass and thresholds (ignore NaNs)
+    # Compute final best weight (mass) and thresholds (ignore NaNs)
     valid = ~np.isnan(mass_hist)
     final_best = np.nanmin(mass_hist) if np.any(valid) else np.nan
-    thresholds = {'80%': final_best/0.80, '95%': final_best/0.95, '99.7%': final_best/0.9997} if np.isfinite(final_best) else {}
+    # thresholds at 68%, 95%, 99.7% of minimum weight
+    thresholds = {
+        '68%': final_best / 0.68,
+        '95%': final_best / 0.95,
+        '99.7%': final_best / 0.9997,
+    } if np.isfinite(final_best) else {}
 
-    # Draw horizontal lines for 80/90/95% and find first iteration reaching each
+    # Draw horizontal lines for those percentages and mark first attainment
     first_hits = {}
     for label, thr in thresholds.items():
-        plt.axhline(thr, color={'80%':'#2ca02c','95%':'#ff7f0e','99.7%':'#d62728'}[label],
-                    linestyle='--', lw=1.5, label=f'{label} of best mass ({thr:.2f} lbm)')
+        color = {'68%':'#2ca02c','95%':'#ff7f0e','99.7%':'#d62728'}[label]
+        plt.axhline(thr, color=color, linestyle='--', lw=1.5, label=f'{label} of best weight ({thr:.2f} lbm)')
         hit_idx = np.where(valid & (mass_hist < thr))[0]
         if hit_idx.size > 0:
             first = int(hit_idx[0])
             first_hits[label] = first+1  # iteration number (1-based)
-            # Vertical tick and annotation
-            plt.axvline(first+1, color={'80%':'#2ca02c','95%':'#ff7f0e','99.7%':'#d62728'}[label], alpha=0.3, lw=1)
-            plt.scatter([first+1], [mass_hist[first]], color={'80%':'#2ca02c','95%':'#ff7f0e','99.7%':'#d62728'}[label], zorder=5)
+            plt.axvline(first+1, color=color, alpha=0.3, lw=1)
+            plt.scatter([first+1], [mass_hist[first]], color=color, zorder=5)
             plt.annotate(f'{label} at it={first+1}', xy=(first+1, mass_hist[first]), xytext=(5, 10),
-                         textcoords='offset points', fontsize=9,
-                         color={'80%':'#2ca02c','95%':'#ff7f0e','99.7%':'#d62728'}[label])
+                         textcoords='offset points', fontsize=9, color=color)
 
     plt.xlabel('Iteration'); plt.ylabel('Mass (lbm)')
-    plt.title(f'Best feasible mass vs iteration (chosen run) for particle {particle}')
+    plt.title(f'Best feasible weight (mass) vs iteration (chosen run) for particle {particle}')
     plt.grid(True, alpha=0.3); plt.legend(); plt.tight_layout()
     plt.savefig('pso_best_mass_vs_iteration.png', dpi=150)
 
     # Print a small console summary of threshold hits
     if thresholds:
-        print('\nThreshold attainment (best feasible mass plot):')
-        for label in ['80%','95%','99.7%']:
+        print('\nThreshold attainment (best feasible weight plot):')
+        for label in thresholds.keys():
             if label in first_hits:
                 print(f'  {label} reached at iteration {first_hits[label]}')
             else:
@@ -184,6 +187,23 @@ if res.get('best_feas_A', np.array([])).size > 0:
         plt.savefig('pso_single_params_vs_iteration.png', dpi=150)
         print('Additional plot saved: pso_single_params_vs_iteration.png')
         plt.savefig('pso_best_feasibility_history.png', dpi=150)
+    # combined plot of w and displacement constraint over iterations
+    if all(k in res for k in ['w_hist','disp_hist']):
+        iters_all = np.arange(1, len(res['w_hist'])+1)
+        figc, axw = plt.subplots(figsize=(9,5))
+        axw.plot(iters_all, res['w_hist'], color='C0', label='gbest w')
+        axw.set_xlabel('Iteration')
+        axw.set_ylabel('w (inertia)', color='C0')
+        axw.tick_params(axis='y', labelcolor='C0')
+        axd = axw.twinx()
+        axd.plot(iters_all, res['disp_hist'], color='C1', label='gbest max disp')
+        axd.axhline(U_ALLOW, color='red', linestyle='--', linewidth=1.4)
+        axd.set_ylabel('Max displacement (in)', color='C1')
+        axd.tick_params(axis='y', labelcolor='C1')
+        plt.title(f'Weight & displacement constraints vs iteration (particle {particle})')
+        figc.tight_layout()
+        figc.savefig('pso_weight_disp_vs_iteration.png', dpi=150)
+        print('Additional plot saved: pso_weight_disp_vs_iteration.png')
 
     # ------------------------------
     # Console summary (chosen run)

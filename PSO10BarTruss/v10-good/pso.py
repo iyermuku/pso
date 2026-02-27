@@ -331,19 +331,21 @@ def pso_single_run(swarm_size: int = 60, iters: int = 250, seed: int = 2026,
     D = 13  # 10 areas + w + c1 + c2
 
     def init_swarm():
+        # latin hypercube sampling over all dimensions
+        U = _lhs(swarm_size, D, rng)
         X = np.zeros((swarm_size, D))
         V = rng.uniform(-1.0, 1.0, size=(swarm_size, D))
-        # Areas
-        X[:, :10] = rng.uniform(Amin, Amax, size=(swarm_size, 10))
+        # Areas (first 10 dims): map to [Amin,Amax]
+        X[:, :10] = Amin + U[:, :10] * (Amax - Amin)
         # Parameters c1,c2 (random positive), w in [0.5, 0.95]
-        X[:, 11] = rng.uniform(0.3, 2.7, size=swarm_size)
-        X[:, 12] = rng.uniform(0.3, 2.7, size=swarm_size)
-        X[:, 10] = rng.uniform(0.5, 0.95, size=swarm_size)
-        # Project each particle's params
+        X[:, 10] = 0.5 + U[:, 10] * (0.95 - 0.5)
+        X[:, 11] = 0.3 + U[:, 11] * (2.7 - 0.3)
+        X[:, 12] = 0.3 + U[:, 12] * (2.7 - 0.3)
+        # Project each particle's params to ensure valid
         for i in range(swarm_size):
             w, c1p, c2p = project_params(X[i, 10], X[i, 11], X[i, 12])
             X[i, 10], X[i, 11], X[i, 12] = w, c1p, c2p
-        logger.debug("Initialized swarm: size=%d, D=%d", swarm_size, D)
+        logger.debug("Initialized swarm with LHS: size=%d, D=%d", swarm_size, D)
         return X, V
 
     def evaluate_swarm(X: np.ndarray):
