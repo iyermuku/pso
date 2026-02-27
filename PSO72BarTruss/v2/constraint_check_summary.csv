@@ -1,0 +1,8 @@
+column,status,max_disp_in,disp_allow_nominal_in,disp_allow_effective_in,disp_violation_in,max_stress_ksi,stress_allow_nominal_ksi,stress_allow_effective_ksi,stress_violation_ksi,computed_mass_lbm,weight_mismatch_lbm,weight_mismatch_over_1pct
+PSO best,constraints satisfied,0.24971947441249592,0.25,0.2525,0.0,24.48567825625907,25.0,25.25,0.0,381.9363625547527,,False
+PSO worst,constraints satisfied,0.24994934257082316,0.25,0.2525,0.0,24.76928956263267,25.0,25.25,0.0,384.6224125019788,,False
+Venkayya [46],constraints satisfied,0.2470653028641629,0.25,0.2525,0.0,24.339350668975143,25.0,25.25,0.0,385.57670652736334,4.376706527363353,True
+Erbatur et al. [43],displacement violated,0.26211955266182485,0.25,0.2525,0.009619552661824848,25.21506908517505,25.0,25.25,0.0,365.3541866350819,-21.395813364918126,True
+Gellatly and Berke [30],constraints satisfied,0.2494131790449328,0.25,0.2525,0.0,24.974054423162084,25.0,25.25,0.0,396.836092439311,,False
+Schimit and Farshi [34],constraints satisfied,0.2499991881061933,0.25,0.2525,0.0,24.969685954947845,25.0,25.25,0.0,388.6462969017641,,False
+Zhou and Rozvany [42],constraints satisfied,0.2499892836005354,0.25,0.2525,0.0,25.00242741894914,25.0,25.25,0.0,379.66910109818514,,False

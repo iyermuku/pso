@@ -1,0 +1,33 @@
++++++++++++++++++++++++++++
+python3 pso72_main.py --mode single --iters 600 --swarm 60 --seeds 3
+w=0.630 c1=1.576 c2=1.744
+[INFO] === FINAL BEST SUMMARY ===Max displacement: 0.250000 in (allow eff 0.250000 in)Max member stress: 24.999058 ksi (allow eff 25.000000 ksi)
+Computed mass: 379.6592 lbmFinal 16 area group values (in^2):  
+A01 = 0.156376  
+A02 = 0.549216  
+A03 = 0.408694  
+A04 = 0.567289  
+A05 = 0.520944  
+A06 = 0.509076  
+A07 = 0.100008  
+A08 = 0.100151  
+A09 = 1.253983  
+A10 = 0.512655  
+A11 = 0.100007  
+A12 = 0.100112  
+A13 = 1.890002  
+A14 = 0.520539  
+A15 = 0.100049  
+A16 = 0.100001
+[INFO] Saved mass history plot: mass_history.png (best seed=0)
+[INFO] Saved parameter history plot: w_c_history.png (best seed=0)
+[INFO] Done.
+
+**************************************
+robust
+[INFO] === FINAL BEST SUMMARY ===Max displacement: 0.250000 in (allow eff 0.250000 in)Max member stress: 24.997368 ksi (allow eff 25.000000 ksi)
+Computed mass: 379.7042 lbmFinal 16 area group values (in^2):  
+A01 = 0.156357  A02 = 0.542900  A03 = 0.413293  A04 = 0.564869  A05 = 0.537865  A06 = 0.520224  A07 = 0.100308  A08 = 0.100217  
+A09 = 1.256038  A10 = 0.506304  A11 = 0.100002  A12 = 0.100041  A13 = 1.869025  A14 = 0.521247  A15 = 0.100557  A16 = 0.100104
+[INFO] Saved mass history plot: mass_history.png (best seed=1)
+[INFO] Done.
