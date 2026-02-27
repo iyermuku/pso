@@ -1,0 +1,320 @@
+Adjusted main and pso 
+
+# Robust (unchanged behavior): identical plots as before
+python main.py --mode robust --num_runs 25 --iters 200 --swarm 60 --max_restarts 2 --stall_window 20
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.729800, c1 = 2.050000, c2 = 2.050000
+Mass = 5061.309399 lbm; Max displacement = 2.000000 in; J = 5061.309399
+Areas (in^2):
+ A[1] = 30.619968
+ A[2] = 0.100115
+ A[3] = 22.761906
+ A[4] = 15.295084
+ A[5] = 0.100045
+ A[6] = 0.528158
+ A[7] = 7.511584
+ A[8] = 21.163995
+ A[9] = 21.560985
+ A[10] = 0.100001
+Member Stresses (ksi):
+ stresses[1] = 6.617690
+ stresses[2] = -1.322292
+ stresses[3] = -8.670915
+ stresses[4] = -6.546704
+ stresses[5] = 24.999545
+ stresses[6] = -0.250648
+ stresses[7] = 18.331299
+ stresses[8] = -6.858139
+ stresses[9] = 6.567815
+ stresses[10] = 1.872135
+INFO Stop timestamp: 2026-01-01 18:01:49
+INFO === PSO: STOP (elapsed 169.82 s) ===
+
+C:\Users\mukun\Documents\pso\codes\psomodularizedcode\v9>python test_truss.py 30.62 0.1 22.76 15.30 0.1 0.53 7.51 21.16 21.56 0.1
+INPUT
+Areas (in^2) [m01..m10]: [30.62, 0.1, 22.76, 15.3, 0.1, 0.53, 7.51, 21.16, 21.56, 0.1]
+
+RESULTS
+Member axial stresses (ksi):
+  m01 (5–3):  6.617672
+  m02 (3–1): -1.325520
+  m03 (6–4): -8.671656
+  m04 (4–2): -6.544611
+  m05 (3–4):  25.005620
+  m06 (1–2): -0.250098
+  m07 (5–4):  18.335229
+  m08 (6–3): -6.859411
+  m09 (3–2):  6.568127
+  m10 (4–1):  1.874568
+
+Nodal displacements (in):
+  node 1: ux =  0.190517, uy = -2.000044
+  node 2: ux = -0.547786, uy = -1.991041
+  node 3: ux =  0.238236, uy = -0.732114
+  node 4: ux = -0.312180, uy = -1.632316
+  node 5: ux =  0.000000, uy =  0.000000
+  node 6: ux =  0.000000, uy =  0.000000
+
+Total structural mass (lbm): 5061.145269
+###############################################################
+# Single-run mode: identical plots + parameter evolution figure
+python main.py --mode single --num_runs 25 --iters 200 --swarm 60 --max_restarts 2 --stall_window 20
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.551271, c1 = 1.820117, c2 = 1.177871
+Mass = 5061.902750 lbm; Max displacement = 1.999999 in; J = 5061.902750
+Areas (in^2):
+ A[1] = 31.278784
+ A[2] = 0.100000
+ A[3] = 22.802556
+ A[4] = 15.128871
+ A[5] = 0.100000
+ A[6] = 0.532462
+ A[7] = 7.513537
+ A[8] = 20.975065
+ A[9] = 21.379619
+ A[10] = 0.100000
+Member Stresses (ksi):
+ stresses[1] = 6.478101
+ stresses[2] = -1.277153
+ stresses[3] = -8.655735
+ stresses[4] = -6.618320
+ stresses[5] = 24.994109
+ stresses[6] = -0.239858
+ stresses[7] = 18.327724
+ stresses[8] = -6.919486
+ stresses[9] = 6.623223
+ stresses[10] = 1.806166
+INFO Stop timestamp: 2026-01-01 17:54:46
+INFO === PSO: STOP (elapsed 163.14 s) ===
+
+C:\Users\mukun\Documents\pso\codes\psomodularizedcode\v9>python test_truss.py 31.28 0.1 22.80 15.13 0.1 0.53 7.51 20.98 21.38 0.1
+INPUT
+Areas (in^2) [m01..m10]: [31.28, 0.1, 22.8, 15.13, 0.1, 0.53, 7.51, 20.98, 21.38, 0.1]
+
+RESULTS
+Member axial stresses (ksi):
+  m01 (5–3):  6.477930
+  m02 (3–1): -1.282077
+  m03 (6–4): -8.656595
+  m04 (4–2): -6.617859
+  m05 (3–4):  25.014373
+  m06 (1–2): -0.241901
+  m07 (5–4):  18.335882
+  m08 (6–3): -6.918028
+  m09 (3–2):  6.623137
+  m10 (4–1):  1.813131
+
+Nodal displacements (in):
+  node 1: ux =  0.187051, uy = -1.999964
+  node 2: ux = -0.549880, uy = -1.991255
+  node 3: ux =  0.233205, uy = -0.731304
+  node 4: ux = -0.311637, uy = -1.631821
+  node 5: ux =  0.000000, uy =  0.000000
+  node 6: ux =  0.000000, uy =  0.000000
+
+Total structural mass (lbm): 5061.897062
+
+***********************************************************
+R.E.Perez,K.Behdinan/ComputersandStructures85(2007)1579–1588
+Verified 10bar truss on 2 softwares: test_trussv3 as well as Cofe,
+Results from Table1 and Table2 (ordered by descending mass)
+  python test_truss.py --in-csv 10BarTrussExperimentResults.csv --out-csv 10BarTrussExperimentResultsOut.csv
+for results from code
+  python test_truss.py --in-csv 10BarTrussMyCode.csv --out-csv 10BarTrussMyCodeResults.csv
+
+PSO best - both violated (stress +0.017112 ksi, disp +0.038905 in)
+PSO worst - displacement violated (+0.028669 in)
+****Gellatly and Berke [30] - satisfies all constraints.****
+****Schimit and Miura [29] - satisfies all constraints.****
+Ghasemi et al [37] - displacement violated (+0.013680 in)
+Schimit and Farshi[34] - misses displacement constraint by 0.3%, mass more than reported +12 lbm
+****Dobbs and Nelson [31] - satisfies all constraints.****
+****Non-robust code - satisfies all constraints. ****
+****Rizzi[32] - satisfies all constraints.****
+****Robust code - satisfies all constraints. ****
+****Haug and Arora[39] - satisfies all constraints.****
+Haftka and Grdal[40] - stress violated (+0.002708 ksi)
+Adeli and Kamal [35] - displacement violated (+0.019486 in)
+El-Sayed and Jang[36] - both violated (stress +6.287794 ksi, disp +0.013124 in) ksi
+Galante[38] - both violated (stress +0.086668 ksi, disp +0.027979 in)
+Memari and Fuladgar [33] - displacement violated (+0.060467 in)
+**************************************************************
+If the displacement tolerance is altered to 2.06in (like Memari and Fuladgar)
+and robust is run
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+Mass = 4918.868197 lbm; Max displacement = 2.059995 in; J = 4918.868197
+Areas (in^2):
+ A[1] = 29.795253
+ A[2] = 0.100025
+ A[3] = 22.596830
+ A[4] = 14.974846
+ A[5] = 0.100098
+ A[6] = 0.476211
+ A[7] = 7.384038
+ A[8] = 20.384608
+ A[9] = 20.633054
+ A[10] = 0.100142
+Member Stresses (ksi):
+ stresses[1] = 6.800282
+ stresses[2] = -1.137414
+ stresses[3] = -8.735025
+ stresses[4] = -6.685462
+ stresses[5] = 24.998956
+ stresses[6] = -0.238907
+ stresses[7] = 18.651258
+ stresses[8] = -7.119152
+ stresses[9] = 6.861915
+ stresses[10] = 1.606672
+INFO Stop timestamp: 2026-01-02 10:29:36
+INFO === PSO: STOP (elapsed 174.97 s) ===
+C:\Users\mukun\Documents\pso\codes\PSO10bartruss\v10>python test_truss.py 29.795 0.1 22.597 14.974 0.1 0.476 7.384 20.384 20.633 0.1
+INPUT
+Areas (in^2) [m01..m10]: [29.795, 0.1, 22.597, 14.974, 0.1, 0.476, 7.384, 20.384, 20.633, 0.1]
+
+RESULTS
+Member axial stresses (ksi):
+  m01 (5–3):  6.800258
+  m02 (3–1): -1.136653
+  m03 (6–4): -8.735068
+  m04 (4–2): -6.685833
+  m05 (3–4):  25.000070
+  m06 (1–2): -0.238793
+  m07 (5–4):  18.651824
+  m08 (6–3): -7.119194
+  m09 (3–2):  6.861925
+  m10 (4–1):  1.607470
+
+Nodal displacements (in):
+  node 1: ux =  0.203890, uy = -2.060008
+  node 2: ux = -0.555152, uy = -2.051412
+  node 3: ux =  0.244809, uy = -0.757391
+  node 4: ux = -0.314462, uy = -1.657394
+  node 5: ux =  0.000000, uy =  0.000000
+  node 6: ux =  0.000000, uy =  0.000000
+
+Total structural mass (lbm): 4918.779792
+****Which is better than Memari and Fuladgar by 63 lbm****
+
+******************************
+If stress is relaxed like
+Haftka and Grdal[40] - stress violated (+0.002708 ksi)
+and Robust is run
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.729800, c1 = 2.050000, c2 = 2.050000
+Mass = 5061.115373 lbm; Max displacement = 1.999998 in; J = 5061.115373
+Areas (in^2):
+ A[1] = 30.282016
+ A[2] = 0.100345
+ A[3] = 23.190013
+ A[4] = 15.284671
+ A[5] = 0.100006
+ A[6] = 0.568763
+ A[7] = 7.473785
+ A[8] = 21.237492
+ A[9] = 21.436219
+ A[10] = 0.100024
+Member Stresses (ksi):
+ stresses[1] = 6.691465
+ stresses[2] = -1.304701
+ stresses[3] = -8.510946
+ stresses[4] = -6.551068
+ stresses[5] = 24.999913
+ stresses[6] = -0.230184
+ stresses[7] = 18.424462
+ stresses[8] = -6.834246
+ stresses[9] = 6.605946
+ stresses[10] = 1.851034
+INFO Stop timestamp: 2026-01-03 11:16:18
+INFO === PSO: STOP (elapsed 178.79 s) ===
+
+C:\Users\mukun\Documents\pso\codes\PSO10bartruss\v10>python test_truss.py 30.282 0.1 23.19 15.285 0.1 0.569 7.474 21.237 21.436 0.1
+INPUT
+Areas (in^2) [m01..m10]: [30.282, 0.1, 23.19, 15.285, 0.1, 0.569, 7.474, 21.237, 21.436, 0.1]
+
+RESULTS
+Member axial stresses (ksi):
+  m01 (5–3):  6.691455
+  m02 (3–1): -1.307602
+  m03 (6–4): -8.510969
+  m04 (4–2): -6.550917
+  m05 (3–4):  24.998787
+  m06 (1–2): -0.229807
+  m07 (5–4):  18.424013
+  m08 (6–3): -6.834376
+  m09 (3–2):  6.606003
+  m10 (4–1):  1.849228
+
+Nodal displacements (in):
+  node 1: ux =  0.193819, uy = -1.999993
+  node 2: ux = -0.542228, uy = -1.991720
+  node 3: ux =  0.240892, uy = -0.732967
+  node 4: ux = -0.306395, uy = -1.632924
+  node 5: ux =  0.000000, uy =  0.000000
+  node 6: ux =  0.000000, uy =  0.000000
+
+Total structural mass (lbm): 5061.095599
+
+C:\Users\mukun\Documents\pso\codes\PSO10bartruss\v10>
+****This is not better than Haftka and Grdal 5060.80****
+But this is better than 25kip limit result.
+******************************
+There is something interesting in A6 that wants to thicken and go back thin.
+Reduce the runs and raise the num iterations, results are better.
+python main.py --mode robust --num_runs 5 --iters 1000 --swarm 60 --max_restarts 2 --stall_window 20 (BETTER)
+
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.729800, c1 = 2.050000, c2 = 2.050000
+Mass = 5060.969361 lbm; Max displacement = 2.000000 in; J = 5060.969361
+Areas (in^2):
+ A[1] = 30.626873
+ A[2] = 0.100023
+ A[3] = 23.154637
+ A[4] = 15.185156
+ A[5] = 0.100022
+ A[6] = 0.544030
+ A[7] = 7.452581
+ A[8] = 20.934337
+ A[9] = 21.626936
+ A[10] = 0.100036
+Member Stresses (ksi):
+ stresses[1] = 6.616159
+ stresses[2] = -1.322262
+ stresses[3] = -8.523897
+ stresses[4] = -6.594088
+ stresses[5] = 24.994466
+ stresses[6] = -0.243105
+ stresses[7] = 18.476658
+ stresses[8] = -6.933294
+ stresses[9] = 6.547779
+ stresses[10] = 1.869726
+INFO Stop timestamp: 2026-01-03 21:47:11
+INFO === PSO: STOP (elapsed 177.81 s) ===
+
+python main.py --mode single --num_runs 5 --iters 1000 --swarm 60 --max_restarts 2 --stall_window 20 (WORSE)
+--- Best FEASIBLE global solution by objective (constraints satisfied; chosen run) ---
+w = 0.999999, c1 = 1.604189, c2 = 1.395811
+Mass = 5082.005432 lbm; Max displacement = 1.999545 in; J = 5082.005432
+Areas (in^2):
+ A[1] = 30.604734
+ A[2] = 0.100000
+ A[3] = 24.244324
+ A[4] = 14.233224
+ A[5] = 0.100000
+ A[6] = 0.100000
+ A[7] = 8.422807
+ A[8] = 21.628396
+ A[9] = 20.608128
+ A[10] = 0.100000
+Member Stresses (ksi):
+ stresses[1] = 6.604017
+ stresses[2] = -0.066871
+ stresses[3] = -8.162151
+ stresses[4] = -7.026285
+ stresses[5] = 21.074899
+ stresses[6] = -0.066871
+ stresses[7] = 16.435311
+ stresses[8] = -6.676928
+ stresses[9] = 6.862866
+ stresses[10] = 0.094570
+INFO Stop timestamp: 2026-01-03 21:53:01
+INFO === PSO: STOP (elapsed 187.01 s) ===
