@@ -1,0 +1,98 @@
+[
+  {
+    "problem_id": "truss10_continuous",
+    "label": "10-Bar Truss (Continuous)",
+    "coeff_mode": "two-phase",
+    "best_mass": 5084.719129956972,
+    "max_displacement": 1.999984280162918,
+    "max_stress": 24.723662220051697,
+    "design_variables": [
+      30.980147296899652,
+      0.1326579607368605,
+      23.0472065712841,
+      16.011467370115508,
+      0.10095918113032692,
+      0.547238678560036,
+      7.606690537269277,
+      21.537983234715472,
+      20.477057992942854,
+      0.1745103793371106
+    ],
+    "final_feasible_fraction": 0.96
+  },
+  {
+    "problem_id": "truss10_discrete",
+    "label": "10-Bar Truss (Discrete Sections)",
+    "coeff_mode": "two-phase",
+    "best_mass": 5560.223347178153,
+    "max_displacement": 1.9958208292804756,
+    "max_stress": 14.439188196676433,
+    "design_variables": [
+      30.0,
+      1.62,
+      30.0,
+      15.5,
+      1.62,
+      1.62,
+      7.97,
+      22.9,
+      19.9,
+      1.62
+    ],
+    "final_feasible_fraction": 1.0
+  },
+  {
+    "problem_id": "truss72_continuous",
+    "label": "72-Bar Truss (Continuous)",
+    "coeff_mode": "two-phase",
+    "best_mass": 385.05653167890637,
+    "max_displacement": 0.24998682954163212,
+    "max_stress": 24.84730142357471,
+    "design_variables": [
+      0.14795699436371315,
+      0.5751514173861684,
+      0.4813439399650524,
+      0.5267705150639174,
+      0.5178842579396592,
+      0.49100009633761643,
+      0.10520999937499484,
+      0.26709252379602094,
+      1.141095108507301,
+      0.5015442529692715,
+      0.12716062040847664,
+      0.10292029754786927,
+      1.9666566538716312,
+      0.4953107222138916,
+      0.10327720137508814,
+      0.10052015398819
+    ],
+    "final_feasible_fraction": 0.66
+  },
+  {
+    "problem_id": "truss72_discrete",
+    "label": "72-Bar Truss (Discrete Sections)",
+    "coeff_mode": "two-phase",
+    "best_mass": 396.1885495790521,
+    "max_displacement": 0.24972635075022903,
+    "max_stress": 24.999463266846952,
+    "design_variables": [
+      0.141,
+      0.563,
+      0.391,
+      0.563,
+      0.563,
+      0.563,
+      0.25,
+      0.307,
+      1.266,
+      0.602,
+      0.111,
+      0.111,
+      1.563,
+      0.442,
+      0.111,
+      0.111
+    ],
+    "final_feasible_fraction": 0.86
+  }
+]

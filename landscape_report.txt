@@ -1,0 +1,33 @@
+10-Bar Truss Objective Landscape Report
+============================================
+
+Primary multimodality diagnostics
+----------------------------------
+Autocorrelation length: 4.615
+Information content (H at eps=0.05): 0.761
+Partial information (M at eps=0.05): 0.518
+LON node count (local attractors): 36
+LON edge density: 0.098
+LON basin entropy: 5.170
+
+Smoothness diagnostics
+---------------------
+Local slope median: 1994.070
+Local slope q90: 77531.666
+Local slope std: 181815.263
+
+Narrow-basin diagnostics
+-----------------------
+Basin width median (normalized, rise=100.0): 0.0304
+Basin width q10 (normalized): 0.0177
+
+Classification
+--------------
+Landscape class: multimodal, narrow-basin | multimodal_score=3, smooth_score=0, narrow_score=3
+
+Generated figures
+-----------------
+- landscape_autocorr.png
+- landscape_information_content.png
+- landscape_basins_map.png
+- landscape_lon_basins.png

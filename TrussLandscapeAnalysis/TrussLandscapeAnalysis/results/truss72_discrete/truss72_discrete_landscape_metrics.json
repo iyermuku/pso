@@ -1,0 +1,81 @@
+{
+  "problem_id": "truss72_discrete",
+  "label": "72-Bar Truss (Discrete Sections)",
+  "seed": 2026,
+  "autocorrelation_length": 184.48183805384875,
+  "information_content_H_eps005": 0.792503262195589,
+  "information_content_M_eps005": 0.5369458128078818,
+  "lon_nodes": 14,
+  "lon_edge_density": 0.08241758241758242,
+  "lon_basin_entropy": 3.8073549220576055,
+  "best_local_objective": 1099.4180739227213,
+  "best_local_design": [
+    5.929875025006479,
+    2.679088063425314,
+    0.8526783457226863,
+    2.8493764635825043,
+    2.070374508305438,
+    0.36523369971721786,
+    0.7431288210342413,
+    0.5185366224735042,
+    2.888927011415232,
+    1.1087021735172706,
+    0.1,
+    3.6320582950763605,
+    1.8708103600063934,
+    0.22048131413954541,
+    0.1,
+    0.6831052577880903
+  ],
+  "top_sensitivity_dims": [
+    13,
+    5
+  ],
+  "top_sensitivity_magnitude": [
+    162815.39869001918,
+    58378.42045742433
+  ],
+  "slope_median": 500.67272861286665,
+  "slope_q90": 1352.8117566683025,
+  "slope_std": 35750.77768854422,
+  "basin_width_mean_norm": 0.07480769230769231,
+  "basin_width_median_norm": 0.036730769230769234,
+  "basin_width_q10_norm": 0.01769230769230769,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal, smooth-macro, narrow-basin",
+  "classification_summary": "Landscape class: multimodal, smooth-macro, narrow-basin | multimodal_score=3, smooth_score=2, narrow_score=2",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 2,
+  "classification_narrow_score": 2,
+  "pso_recommendation": {
+    "recommended": {
+      "w": 0.57,
+      "c1": 1.333,
+      "c2": 1.667
+    },
+    "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 150,
+    "recommended_iters": 320,
+    "schedule": {
+      "phase_1_explore": {
+        "w": 0.6200000000000001,
+        "c1": 1.2333333333333334,
+        "c2": 1.7666666666666666
+      },
+      "phase_2_refine": {
+        "w": 0.52,
+        "c1": 1.4333333333333336,
+        "c2": 1.5666666666666664
+      },
+      "switch_fraction_of_iters": 0.6
+    },
+    "rationale": [
+      "Multimodality: raise social pull for swarm consensus across local basins.",
+      "Narrow basin: reduce inertia and retain cognitive pull for local refinement.",
+      "High information content: increase exploitation pressure after discovery.",
+      "Very narrow basin estimate: damp momentum and increase pbest guidance.",
+      "Swarm size 150: 10\u00d7dim=160 base +15 multimodal +10 narrow, clipped to [30, 150].",
+      "Iterations 320: 200 base +60 multimodal +60 narrow, clipped to [150, 600]."
+    ]
+  }
+}

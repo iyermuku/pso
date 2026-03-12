@@ -1,0 +1,23 @@
+72-Bar Truss (Discrete Sections) Landscape Report
+=================================================
+
+Classification: multimodal, smooth-macro
+Autocorrelation length: 22.076
+Information content H(eps=0.05): 0.803
+LON nodes: 8
+LON edge density: 0.125
+Basin width median (norm): 0.0875
+
+Recommended PSO coefficients:
+w=0.730, c1=1.250, c2=1.750
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Smooth macro-landscape: slightly higher inertia supports broader traversal.
+- High information content: increase exploitation pressure after discovery.
+
+Generated plots:
+- truss72_discrete_autocorr.png
+- truss72_discrete_information_content.png
+- truss72_discrete_basins_map.png
+- truss72_discrete_lon_basins.png

@@ -1,0 +1,48 @@
+10-Bar Truss Objective Landscape Report
+============================================
+
+Primary multimodality diagnostics
+----------------------------------
+Autocorrelation length: 4.615
+Information content (H at eps=0.05): 0.761
+Partial information (M at eps=0.05): 0.518
+LON node count (local attractors): 36
+LON edge density: 0.098
+LON basin entropy: 5.170
+
+Smoothness diagnostics
+---------------------
+Local slope median: 1994.070
+Local slope q90: 77531.666
+Local slope std: 181815.263
+
+Narrow-basin diagnostics
+-----------------------
+Basin width median (normalized, rise=100.0): 0.0304
+Basin width q10 (normalized): 0.0177
+
+Classification
+--------------
+Landscape class: multimodal, narrow-basin | multimodal_score=3, smooth_score=0, narrow_score=3
+
+PSO Coefficient Recommendation
+------------------------------
+Recommended fixed coefficients: w=0.540, c1=1.292, c2=1.708 (c1+c2=3.000)
+Suggested 2-phase schedule:
+  Phase 1 (0-60% iters): w=0.590, c1=1.192, c2=1.808
+  Phase 2 (60-100% iters): w=0.520, c1=1.392, c2=1.608
+Robust alternative: w=0.7298, c1=2.05, c2=2.05
+Reasoning:
+  - Multimodality detected (high info content / many attractors): increase social pull to help swarm consensus.
+  - Narrow basin detected (small basin width): reduce inertia and keep enough cognitive pull for local refinement.
+  - Many weakly connected local optima (sparse LON): favor stronger social attraction to avoid fragmented sub-swarms.
+  - Short autocorrelation length: lower inertia to avoid overshooting in rapidly changing terrain.
+  - High information content: emphasize exploitation pressure after discovery.
+  - Very narrow basin estimate: further damp momentum and increase personal-best guidance.
+
+Generated figures
+-----------------
+- landscape_autocorr.png
+- landscape_information_content.png
+- landscape_basins_map.png
+- landscape_lon_basins.png

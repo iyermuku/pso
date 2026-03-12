@@ -1,0 +1,74 @@
+{
+  "problem_id": "truss10_discrete",
+  "label": "10-Bar Truss (Discrete Sections)",
+  "seed": 2026,
+  "autocorrelation_length": 13.038122668302115,
+  "information_content_H_eps005": 0.7358102224438235,
+  "information_content_M_eps005": 0.5302013422818792,
+  "lon_nodes": 29,
+  "lon_edge_density": 0.08374384236453201,
+  "lon_basin_entropy": 4.840223928941851,
+  "best_local_objective": 3660.420459539048,
+  "best_local_design": [
+    11.0105018620156,
+    1.478035743089249,
+    11.283668525069396,
+    5.389820841986731,
+    0.3104090979841736,
+    0.5828740258647559,
+    6.892923165499552,
+    7.294792650542797,
+    7.392124238423891,
+    2.194
+  ],
+  "top_sensitivity_dims": [
+    7,
+    8
+  ],
+  "top_sensitivity_magnitude": [
+    4.877817935095956,
+    3.6372239489666605
+  ],
+  "slope_median": 2229.8975636932073,
+  "slope_q90": 65667.90904507981,
+  "slope_std": 62436.14934662877,
+  "basin_width_mean_norm": 0.1146978021978022,
+  "basin_width_median_norm": 0.11923076923076924,
+  "basin_width_q10_norm": 0.06846153846153846,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal",
+  "classification_summary": "Landscape class: multimodal | multimodal_score=3, smooth_score=1, narrow_score=1",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 1,
+  "classification_narrow_score": 1,
+  "pso_recommendation": {
+    "recommended": {
+      "w": 0.68,
+      "c1": 1.21,
+      "c2": 1.79
+    },
+    "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 130,
+    "recommended_iters": 290,
+    "schedule": {
+      "phase_1_explore": {
+        "w": 0.7300000000000001,
+        "c1": 1.1096774193548384,
+        "c2": 1.8903225806451613
+      },
+      "phase_2_refine": {
+        "w": 0.6000000000000001,
+        "c1": 1.3096774193548386,
+        "c2": 1.6903225806451612
+      },
+      "switch_fraction_of_iters": 0.6
+    },
+    "rationale": [
+      "Multimodality: raise social pull for swarm consensus across local basins.",
+      "Many weakly connected attractors: increase social attraction to reduce swarm fragmentation.",
+      "High information content: increase exploitation pressure after discovery.",
+      "Swarm size 130: 10\u00d7dim=100 base +15 multimodal +5 narrow +10 LON, clipped to [30, 150].",
+      "Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600]."
+    ]
+  }
+}

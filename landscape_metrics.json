@@ -1,0 +1,45 @@
+{
+  "seed": 2026,
+  "n_ref": 800,
+  "walk_steps": 420,
+  "walk_step_frac": 0.03,
+  "autocorrelation_length": 4.615257718120997,
+  "information_content_H_eps005": 0.7614523558081471,
+  "information_content_M_eps005": 0.517948717948718,
+  "lon_nodes": 36,
+  "lon_edge_density": 0.09841269841269841,
+  "lon_basin_entropy": 5.169925001442311,
+  "best_local_objective": 2658.2411402702996,
+  "best_local_design": [
+    9.674754078656209,
+    0.3882975880428976,
+    8.00132239646765,
+    5.535949480659153,
+    0.7543955047644019,
+    0.1,
+    5.528857751734766,
+    6.329234852739288,
+    6.785424226410305,
+    0.3511250820167344
+  ],
+  "top_sensitivity_dims": [
+    2,
+    6
+  ],
+  "top_sensitivity_magnitude": [
+    383.29607798099863,
+    230.0641350604088
+  ],
+  "slope_median": 1994.0703350384538,
+  "slope_q90": 77531.66555077641,
+  "slope_std": 181815.26307385627,
+  "basin_width_mean_norm": 0.031971153846153844,
+  "basin_width_median_norm": 0.030384615384615385,
+  "basin_width_q10_norm": 0.01769230769230769,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal, narrow-basin",
+  "classification_summary": "Landscape class: multimodal, narrow-basin | multimodal_score=3, smooth_score=0, narrow_score=3",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 0,
+  "classification_narrow_score": 3
+}

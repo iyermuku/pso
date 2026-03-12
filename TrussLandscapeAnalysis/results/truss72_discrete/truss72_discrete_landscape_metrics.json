@@ -1,0 +1,80 @@
+{
+  "problem_id": "truss72_discrete",
+  "label": "72-Bar Truss (Discrete Sections)",
+  "seed": 2026,
+  "autocorrelation_length": 22.076289120042265,
+  "information_content_H_eps005": 0.8027028233153932,
+  "information_content_M_eps005": 0.6111111111111112,
+  "lon_nodes": 8,
+  "lon_edge_density": 0.125,
+  "lon_basin_entropy": 3.0,
+  "best_local_objective": 1059.5511047811492,
+  "best_local_design": [
+    0.18635586077772048,
+    1.1306375587308357,
+    0.1,
+    6.349023837613532,
+    2.419499263376359,
+    0.691708732012257,
+    0.1,
+    0.1,
+    0.39883338253876177,
+    0.6184037889234415,
+    0.4136069974008898,
+    0.6357515944441157,
+    1.7282420265492269,
+    1.0840251890652473,
+    0.48542788418804106,
+    8.911245964300608
+  ],
+  "top_sensitivity_dims": [
+    15,
+    13
+  ],
+  "top_sensitivity_magnitude": [
+    131.9932658214894,
+    126.8460379963545
+  ],
+  "slope_median": 499.29759221962104,
+  "slope_q90": 1385.501328734825,
+  "slope_std": 35714.93347666906,
+  "basin_width_mean_norm": 0.10291208791208792,
+  "basin_width_median_norm": 0.0875,
+  "basin_width_q10_norm": 0.055769230769230765,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal, smooth-macro",
+  "classification_summary": "Landscape class: multimodal, smooth-macro | multimodal_score=3, smooth_score=2, narrow_score=1",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 2,
+  "classification_narrow_score": 1,
+  "pso_recommendation": {
+    "recommended": {
+      "w": 0.73,
+      "c1": 1.25,
+      "c2": 1.75
+    },
+    "recommended_sum_c1_c2": 3.0,
+    "schedule": {
+      "phase_1_explore": {
+        "w": 0.75,
+        "c1": 1.15,
+        "c2": 1.85
+      },
+      "phase_2_refine": {
+        "w": 0.6500000000000001,
+        "c1": 1.35,
+        "c2": 1.65
+      },
+      "switch_fraction_of_iters": 0.6
+    },
+    "rationale": [
+      "Multimodality: raise social pull for swarm consensus across local basins.",
+      "Smooth macro-landscape: slightly higher inertia supports broader traversal.",
+      "High information content: increase exploitation pressure after discovery.",
+      "Swarm size 150: 10\u00d7dim=160 base +15 multimodal +5 narrow, clipped to [30, 150].",
+      "Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600]."
+    ],
+    "recommended_swarm_size": 150,
+    "recommended_iters": 290
+  }
+}

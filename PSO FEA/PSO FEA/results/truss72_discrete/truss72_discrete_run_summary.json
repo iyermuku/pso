@@ -1,0 +1,45 @@
+{
+  "problem_id": "truss72_discrete",
+  "label": "72-Bar Truss (Discrete Sections)",
+  "coefficient_mode": "two-phase",
+  "recommended_coefficients": {
+    "w": 0.75,
+    "c1": 1.15,
+    "c2": 1.85
+  },
+  "recommended_schedule": {
+    "phase_1_explore": {
+      "w": 0.75,
+      "c1": 1.15,
+      "c2": 1.85
+    },
+    "phase_2_refine": {
+      "w": 0.6500000000000001,
+      "c1": 1.35,
+      "c2": 1.65
+    },
+    "switch_fraction_of_iters": 0.6
+  },
+  "design_variables": [
+    0.141,
+    0.563,
+    0.391,
+    0.563,
+    0.563,
+    0.563,
+    0.25,
+    0.307,
+    1.266,
+    0.602,
+    0.111,
+    0.111,
+    1.563,
+    0.442,
+    0.111,
+    0.111
+  ],
+  "best_mass": 396.1885495790521,
+  "max_displacement": 0.24972635075022903,
+  "max_stress": 24.999463266846952,
+  "final_feasible_fraction": 0.86
+}

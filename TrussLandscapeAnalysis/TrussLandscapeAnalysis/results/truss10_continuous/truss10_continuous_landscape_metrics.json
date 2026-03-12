@@ -1,0 +1,77 @@
+{
+  "problem_id": "truss10_continuous",
+  "label": "10-Bar Truss (Continuous)",
+  "seed": 2026,
+  "autocorrelation_length": 4.45972863879473,
+  "information_content_H_eps005": 0.7522514958984277,
+  "information_content_M_eps005": 0.5272727272727272,
+  "lon_nodes": 30,
+  "lon_edge_density": 0.09770114942528736,
+  "lon_basin_entropy": 4.906890595608519,
+  "best_local_objective": 2846.560361908304,
+  "best_local_design": [
+    9.9635018620156,
+    0.1,
+    8.142668525069396,
+    4.342820841986731,
+    0.1,
+    0.1,
+    5.845923165499553,
+    6.771292650542796,
+    6.3451242384238915,
+    0.6235
+  ],
+  "top_sensitivity_dims": [
+    2,
+    5
+  ],
+  "top_sensitivity_magnitude": [
+    568.607464843017,
+    384.21813874455466
+  ],
+  "slope_median": 2006.329542568939,
+  "slope_q90": 78705.91285447957,
+  "slope_std": 117861.12480979762,
+  "basin_width_mean_norm": 0.031291208791208794,
+  "basin_width_median_norm": 0.01769230769230769,
+  "basin_width_q10_norm": 0.01769230769230769,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal, narrow-basin",
+  "classification_summary": "Landscape class: multimodal, narrow-basin | multimodal_score=3, smooth_score=0, narrow_score=3",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 0,
+  "classification_narrow_score": 3,
+  "pso_recommendation": {
+    "recommended": {
+      "w": 0.54,
+      "c1": 1.292,
+      "c2": 1.708
+    },
+    "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 140,
+    "recommended_iters": 400,
+    "schedule": {
+      "phase_1_explore": {
+        "w": 0.5900000000000001,
+        "c1": 1.1923076923076925,
+        "c2": 1.807692307692308
+      },
+      "phase_2_refine": {
+        "w": 0.52,
+        "c1": 1.3923076923076927,
+        "c2": 1.6076923076923078
+      },
+      "switch_fraction_of_iters": 0.6
+    },
+    "rationale": [
+      "Multimodality: raise social pull for swarm consensus across local basins.",
+      "Narrow basin: reduce inertia and retain cognitive pull for local refinement.",
+      "Many weakly connected attractors: increase social attraction to reduce swarm fragmentation.",
+      "Short autocorrelation length: lower inertia to avoid overshoot.",
+      "High information content: increase exploitation pressure after discovery.",
+      "Very narrow basin estimate: damp momentum and increase pbest guidance.",
+      "Swarm size 140: 10\u00d7dim=100 base +15 multimodal +15 narrow +10 LON, clipped to [30, 150].",
+      "Iterations 400: 200 base +60 multimodal +90 narrow +50 LON, clipped to [150, 600]."
+    ]
+  }
+}
