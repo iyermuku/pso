@@ -226,10 +226,60 @@ def make_72bar_discrete() -> LandscapeProblem:
     )
 
 
+def make_200bar_continuous() -> LandscapeProblem:
+    base = ROOT / "PSO200BarTruss"
+    truss = _load_module("truss200_cont", base / "truss200.py")
+
+    state = {"avg_m": None, "avg_g": None}
+
+    def calibrate(n_ref: int, seed: int) -> None:
+        rng = np.random.default_rng(seed)
+        x_ref = rng.uniform(truss.A_MIN, truss.A_MAX, size=(n_ref, truss.N_GROUPS))
+        m_list = np.zeros(n_ref)
+        g_mat = np.zeros((n_ref, len(truss.FREE_DOFS)))
+        for i in range(n_ref):
+            res = truss.evaluate(x_ref[i])
+            g = np.asarray(res["disp_violation"], dtype=float)
+            m_list[i] = float(res["mass"])
+            g_mat[i] = g
+        state["avg_m"] = float(np.mean(m_list))
+        state["avg_g"] = np.mean(g_mat, axis=0)
+
+    def evaluate(x: np.ndarray):
+        a = np.clip(np.asarray(x, dtype=float), truss.A_MIN, truss.A_MAX)
+        res = truss.evaluate(a)
+        g = np.asarray(res["disp_violation"], dtype=float)
+        mass = float(res["mass"])
+        if np.all(g <= 1e-12):
+            objective = mass
+        else:
+            avg_g = state["avg_g"]
+            avg_m = state["avg_m"]
+            denom = float(np.sum(avg_g**2))
+            if denom <= 1e-16:
+                objective = mass + 1e5 * float(np.sum(g))
+            else:
+                penalty = abs(avg_m) * (avg_g / denom)
+                objective = float(mass + np.dot(penalty, g))
+        cv = float(np.sum(np.maximum(g, 0.0)))
+        return objective, mass, cv
+
+    lo, hi = truss.grouped_design_bounds()
+    return LandscapeProblem(
+        problem_id="truss200_continuous",
+        label="200-Bar Planar Truss (Continuous)",
+        lo=lo,
+        hi=hi,
+        evaluate=evaluate,
+        calibrate=calibrate,
+    )
+
+
 def get_all_truss_problems() -> list[LandscapeProblem]:
     return [
         make_10bar_continuous(),
         make_10bar_discrete(),
         make_72bar_continuous_v2(),
         make_72bar_discrete(),
+        make_200bar_continuous(),
     ]

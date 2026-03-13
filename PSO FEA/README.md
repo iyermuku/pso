@@ -7,6 +7,7 @@ Common PSO runner for all truss FEA problems in this repository.
 - `truss10_discrete`
 - `truss72_continuous`
 - `truss72_discrete`
+- `truss200_continuous`
 
 ## Design
 - Reuses model / FEA logic from the existing truss folders.
@@ -33,6 +34,7 @@ python "PSO FEA/run_pso_fea.py" --problem truss10_continuous
 python "PSO FEA/run_pso_fea.py" --problem truss10_discrete
 python "PSO FEA/run_pso_fea.py" --problem truss72_continuous
 python "PSO FEA/run_pso_fea.py" --problem truss72_discrete
+python "PSO FEA/run_pso_fea.py" --problem truss200_continuous
 
 # use landscape two-phase schedule
 python "PSO FEA/run_pso_fea.py" --problem truss10_continuous --coeff-mode two-phase

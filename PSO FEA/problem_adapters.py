@@ -353,12 +353,78 @@ def _make_72bar_discrete() -> TrussProblem:
     return _make_72_evaluator(truss, rec, "truss72_discrete", "72-Bar Truss (Discrete Sections)", snap=True)
 
 
+def _make_200bar_continuous() -> TrussProblem:
+    base = ROOT / "PSO200BarTruss"
+    truss = _load_module("pso_fea_truss200_cont", base / "truss200.py")
+    rec = _load_recommendation("truss200_continuous")
+
+    state = {"avg_m": None, "avg_g": None}
+
+    def calibrate(n_ref: int = 400, seed: int = 2026) -> None:
+        rng = np.random.default_rng(seed)
+        x_ref = rng.uniform(truss.A_MIN, truss.A_MAX, size=(n_ref, truss.N_GROUPS))
+        m_list = np.zeros(n_ref)
+        g_mat = np.zeros((n_ref, len(truss.FREE_DOFS)))
+        for i in range(n_ref):
+            res = truss.evaluate(x_ref[i])
+            g = np.asarray(res["disp_violation"], dtype=float)
+            m_list[i] = float(res["mass"])
+            g_mat[i] = g
+        state["avg_m"] = float(np.mean(m_list))
+        state["avg_g"] = np.mean(g_mat, axis=0)
+
+    def evaluate(x: np.ndarray) -> Dict[str, float]:
+        if state["avg_m"] is None:
+            calibrate()
+        a = np.clip(np.asarray(x, dtype=float), truss.A_MIN, truss.A_MAX)
+        res = truss.evaluate(a)
+        g = np.asarray(res["disp_violation"], dtype=float)
+        mass = float(res["mass"])
+        if np.all(g <= 1e-12):
+            objective = mass
+        else:
+            avg_g = state["avg_g"]
+            avg_m = state["avg_m"]
+            denom = float(np.sum(avg_g**2))
+            if denom <= 1e-16:
+                objective = mass + 1e5 * float(np.sum(g))
+            else:
+                penalty = abs(avg_m) * (avg_g / denom)
+                objective = float(mass + np.dot(penalty, g))
+        cv = float(np.sum(np.maximum(g, 0.0)))
+        return {
+            "objective": float(objective),
+            "mass": mass,
+            "constraint_violation": cv,
+            "feasible": float(cv <= 1e-9),
+            "max_disp": float(res["max_disp"]),
+            "max_stress": float(res["max_stress"]),
+            "x_eval": a.copy(),
+        }
+
+    lo, hi = truss.grouped_design_bounds()
+    return TrussProblem(
+        problem_id="truss200_continuous",
+        label="200-Bar Planar Truss (Continuous)",
+        lo=lo,
+        hi=hi,
+        recommended_w=rec["w"],
+        recommended_c1=rec["c1"],
+        recommended_c2=rec["c2"],
+        recommended_schedule=rec["schedule"],
+        recommended_swarm_size=rec["swarm_size"],
+        recommended_iters=rec["iters"],
+        evaluate=evaluate,
+    )
+
+
 def get_problem(problem_id: str) -> TrussProblem:
     builders = {
         "truss10_continuous": _make_10bar_continuous,
         "truss10_discrete": _make_10bar_discrete,
         "truss72_continuous": _make_72bar_continuous,
         "truss72_discrete": _make_72bar_discrete,
+        "truss200_continuous": _make_200bar_continuous,
     }
     if problem_id not in builders:
         raise KeyError(f"Unknown problem_id: {problem_id}")
@@ -371,4 +437,5 @@ def list_problem_ids() -> list[str]:
         "truss10_discrete",
         "truss72_continuous",
         "truss72_discrete",
+        "truss200_continuous",
     ]

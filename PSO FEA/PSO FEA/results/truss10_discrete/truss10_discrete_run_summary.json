@@ -1,12 +1,12 @@
 {
   "problem_id": "truss10_discrete",
   "label": "10-Bar Truss (Discrete Sections)",
+  "coefficient_mode": "two-phase",
   "recommended_coefficients": {
-    "w": 0.68,
-    "c1": 1.21,
-    "c2": 1.79
+    "w": 0.7300000000000001,
+    "c1": 1.1096774193548384,
+    "c2": 1.8903225806451613
   },
-  "coefficient_mode": "fixed",
   "recommended_schedule": {
     "phase_1_explore": {
       "w": 0.7300000000000001,
@@ -23,19 +23,19 @@
   "swarm_size": 130,
   "iters": 290,
   "design_variables": [
-    30.0,
-    1.62,
     33.5,
-    13.9,
+    1.62,
+    22.9,
+    14.2,
     1.62,
     1.62,
     7.97,
-    19.9,
     22.9,
+    22.0,
     1.62
   ],
-  "best_mass": 5628.6233471781525,
-  "max_displacement": 1.9965414088966407,
-  "max_stress": 14.877868763430076,
+  "best_mass": 5490.737892493558,
+  "max_displacement": 1.9989428468839359,
+  "max_stress": 14.196928187495532,
   "final_feasible_fraction": 1.0
 }

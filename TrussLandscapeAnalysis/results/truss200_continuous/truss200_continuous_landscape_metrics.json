@@ -1,0 +1,92 @@
+{
+  "problem_id": "truss200_continuous",
+  "label": "200-Bar Planar Truss (Continuous)",
+  "seed": 2026,
+  "autocorrelation_length": 29.10101608033086,
+  "information_content_H_eps005": 0.8695390875423006,
+  "information_content_M_eps005": 0.4772727272727273,
+  "lon_nodes": 14,
+  "lon_edge_density": 0.07142857142857142,
+  "lon_basin_entropy": 3.8073549220576055,
+  "best_local_objective": 5491.7457292910485,
+  "best_local_design": [
+    0.2300580669863932,
+    1.1575350439247405,
+    0.7190729162280449,
+    0.1,
+    0.5959928704992243,
+    0.12801401302541748,
+    0.11219746379394192,
+    1.8742376784229022,
+    0.14255828048753827,
+    1.3369644205238584,
+    0.1,
+    0.20008748067347815,
+    1.5575846092191334,
+    0.4523070208494291,
+    1.5623587509673045,
+    0.1,
+    0.5193518527157815,
+    0.8882701929035173,
+    0.41742382807529266,
+    0.8641389538836952,
+    0.3150093525233786,
+    0.5357862016574702,
+    0.9135486469546991,
+    0.43490704704901584,
+    0.925084294633277,
+    0.39924067864410184,
+    1.5789380649165186,
+    1.1270749338693467,
+    1.4795476398386853
+  ],
+  "top_sensitivity_dims": [
+    27,
+    5
+  ],
+  "top_sensitivity_magnitude": [
+    504.35114588789907,
+    465.47351558238483
+  ],
+  "slope_median": 2051.1949688486575,
+  "slope_q90": 48080.643770514325,
+  "slope_std": 44996.25001590381,
+  "basin_width_mean_norm": 0.15730769230769232,
+  "basin_width_median_norm": 0.11923076923076924,
+  "basin_width_q10_norm": 0.09384615384615384,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal",
+  "classification_summary": "Landscape class: multimodal | multimodal_score=3, smooth_score=1, narrow_score=1",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 1,
+  "classification_narrow_score": 1,
+  "pso_recommendation": {
+    "recommended": {
+      "w": 0.68,
+      "c1": 1.25,
+      "c2": 1.75
+    },
+    "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 150,
+    "recommended_iters": 290,
+    "schedule": {
+      "phase_1_explore": {
+        "w": 0.7300000000000001,
+        "c1": 1.15,
+        "c2": 1.85
+      },
+      "phase_2_refine": {
+        "w": 0.6000000000000001,
+        "c1": 1.35,
+        "c2": 1.65
+      },
+      "switch_fraction_of_iters": 0.6
+    },
+    "rationale": [
+      "Multimodality: raise social pull for swarm consensus across local basins.",
+      "High information content: increase exploitation pressure after discovery.",
+      "Swarm size 150: 10\u00d7dim=290 base +15 multimodal +5 narrow, clipped to [30, 150].",
+      "Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600]."
+    ]
+  }
+}

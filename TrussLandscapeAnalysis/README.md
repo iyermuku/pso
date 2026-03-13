@@ -1,203 +1,267 @@
 # TrussLandscapeAnalysis
 
-Objective-landscape analysis for all four truss structural-optimisation problems in this
-repository.  The package measures the ruggedness, multimodality, and basin structure of each
-problem's fitness landscape, then derives problem-specific PSO hyperparameter recommendations
-(inertia weight `w`, cognitive/social coefficients `c1`/`c2`, swarm size, and iteration count).
+Objective-landscape analysis for truss optimization problems in this repository.
+The code computes landscape diagnostics (ruggedness, multimodality, basin geometry),
+classifies each problem, and then derives PSO settings for:
 
----
+- fixed coefficients (`w, c1, c2`)
+- two-phase coefficients (exploration phase + refinement phase)
 
-## Package structure
+This README is written for paper/research presentation and maps directly to the
+implementation in `TrussLandscapeAnalysis/landscape_core.py`.
 
-```
-TrussLandscapeAnalysis/
-├── landscape_core.py          # Core analysis engine (metrics, classification, recommendation)
-├── problem_adapters.py        # Wraps each truss model as a LandscapeProblem
-├── run_all_truss_landscapes.py# Full analysis runner + comparative report generator
-├── rebuild_comparative_report.py # Fast rebuild from saved per-problem JSON (no FEA re-run)
-└── results/
-    ├── comparative_landscape_report.md   # Cross-problem summary report
-    ├── all_landscape_metrics.json        # All four metrics in one file
-    ├── comparison_landscape_scores.png   # Bar chart of classification scores
-    ├── comparison_ruggedness_lon.png     # Ruggedness vs LON node count
-    ├── truss10_continuous/
-    │   ├── truss10_continuous_landscape_metrics.json
-    │   ├── truss10_continuous_landscape_report.txt
-    │   ├── truss10_continuous_autocorr.png
-    │   ├── truss10_continuous_information_content.png
-    │   ├── truss10_continuous_basins_map.png
-    │   └── truss10_continuous_lon_basins.png
-    ├── truss10_discrete/       (same structure)
-    ├── truss72_continuous/     (same structure)
-    └── truss72_discrete/       (same structure)
-```
+## Scope and workflow
 
----
+1. Define each truss problem through `problem_adapters.py`.
+2. Sample/evaluate objective values through random walks and local descents.
+3. Compute diagnostic metrics: autocorrelation, information content, LON, basin widths.
+4. Convert metrics into three score axes: multimodal, smooth, narrow.
+5. Assign class labels from scores.
+6. Deduce PSO hyperparameters (fixed and two-phase) from class + metric values.
 
-## Metrics produced
+## Definitions with literature context
 
-| Metric | Key in JSON | Interpretation |
-|---|---|---|
-| Autocorrelation length | `autocorrelation_length` | Steps until walk correlation drops below 1/e.  Shorter → more rugged. |
-| Information content H(ε=0.05) | `information_content_H_eps005` | Entropy of objective-value changes along random walks.  Higher → more complex/varied landscape. |
-| LON node count | `lon_nodes` | Number of distinct local optima found by the Local Optima Network construction. |
-| LON edge density | `lon_edge_density` | Fraction of possible LON edges present.  Low = fragmented attractor landscape. |
-| LON basin entropy | `lon_basin_entropy` | Diversity of basin sizes (higher = more even distribution of local optima). |
-| Basin width median (normalised) | `basin_width_median_norm` | Median width of attraction basins relative to the search-space extent.  Smaller → narrower basins. |
-| Classification labels | `classification_labels` | Comma-separated tags assigned to the problem (see below). |
-| Multimodal / smooth / narrow scores | `classification_multimodal_score` etc. | Integer severity scores 0–3 for each classification axis. |
+### Multimodal
+Multimodal means the objective landscape contains multiple local optima with distinct
+basins of attraction. In this code, multimodality is inferred from Local Optima Network
+(LON) structure and random-walk information characteristics.
 
-### Classification labels
+LON perspective:
 
-| Label | Meaning |
-|---|---|
-| `multimodal` | Multiple local optima detected via LON |
-| `smooth-macro` | Long autocorrelation length — smooth macro-scale funnel structure |
-| `narrow-basin` | Median attraction-basin width is small — precise convergence needed |
+- nodes = local optima
+- edges = transitions between attraction basins under perturbation + local search
 
----
+Key references: Ochoa et al. (2008), Tomassini et al. (2008), Daolio et al. (2010).
 
-## PSO hyperparameter recommendation
+### Narrow basin
+Narrow means promising basins occupy a small normalized region around local optima,
+so optimization requires precise local motion and low overshoot.
 
-`recommend_pso_coefficients()` in `landscape_core.py` maps the measured metrics to concrete PSO
-settings.  The full recommendation is stored in each problem's metrics JSON at key
-`pso_recommendation`:
+In this code, narrowness is estimated by directional basin width around the best
+local optimum: how far one can move (normalized to variable span) before the objective
+rises by a fixed absolute amount (`rise_abs`).
 
-```json
-{
-  "recommended": {"w": 0.54, "c1": 1.292, "c2": 1.708},
-  "recommended_sum_c1_c2": 3.0,
-  "recommended_swarm_size": 140,
-  "recommended_iters": 400,
-  "schedule": {
-    "phase_1_explore": {"w": 0.59, "c1": 1.192, "c2": 1.808},
-    "phase_2_refine":  {"w": 0.52, "c1": 1.392, "c2": 1.608},
-    "switch_fraction_of_iters": 0.6
-  },
-  "rationale": ["..."]
-}
-```
+### Smooth ("smooth-macro")
+Smooth here means the macro-scale trend is correlated over longer steps (funnel-like),
+not necessarily globally convex. A landscape can be smooth at coarse scale while still
+having local structure.
 
-### Swarm size heuristic
+This is measured primarily by autocorrelation length and slope dispersion statistics.
 
-```
-swarm_size = clip(10×dim + 5×multimodal_score + 5×narrow_score [+ 10 if LON≥20], 30, 150)
-```
+### Autocorrelation length (`autocorrelation_length`)
+From a random walk in decision space, let `r(1)` be lag-1 autocorrelation in objective values.
+The code uses:
 
-### Iteration count heuristic
+`ell = -1 / ln(|r(1)|)`
 
-```
-n_iters = clip(200 + 20×multimodal_score + 30×narrow_score [+ 50 if LON≥30] [+ 50 if AC<3], 150, 600)
-```
+Higher `ell` means slower decorrelation (smoother trend); lower `ell` means ruggedness.
 
-Both values plus the `rationale` list explaining each decision are written to the per-problem JSON.
+Key reference: Weinberger (1990) random-walk autocorrelation analysis.
 
----
+### LON nodes (`lon_nodes`)
+`lon_nodes` is the number of distinct local optima found by repeated local descent from
+multiple starts and clustered into attractors. Larger node count typically indicates more
+multimodal structure.
+
+## Implemented metrics and outputs
+
+Saved per problem in `<id>_landscape_metrics.json`:
+
+- `autocorrelation_length`
+- `information_content_H_eps005`
+- `information_content_M_eps005`
+- `lon_nodes`, `lon_edge_density`, `lon_basin_entropy`
+- `basin_width_mean_norm`, `basin_width_median_norm`, `basin_width_q10_norm`
+- `classification_*`
+- `pso_recommendation`
+
+## Score system and classification mapping
+
+Scoring is implemented in `classify_landscape(...)`.
+
+### 1) Multimodal score (`0..4`)
+Increment by 1 for each true condition:
+
+- `lon_nodes >= 4`
+- `lon_entropy >= 1.0`
+- `info_h >= 0.55`
+- `lon_density >= 0.25`
+
+Label rule:
+
+- if `multimodal_score >= 2` -> add label `multimodal`
+
+### 2) Smooth score (`0..3`)
+Increment by 1 for each true condition:
+
+- `ac_len >= 6.0`
+- `info_h <= 0.45`
+- `slope_q90 <= 6 * slope_median`
+
+Label rule:
+
+- if `smooth_score >= 2` -> add label `smooth-macro`
+
+### 3) Narrow score (`0..3`)
+Increment by 1 for each true condition:
+
+- `basin_width_median_norm <= 0.10`
+- `basin_width_q10_norm <= 0.04`
+- `slope_q90 >= 3 * slope_median`
+
+Label rule:
+
+- if `narrow_score >= 2` -> add label `narrow-basin`
+
+Fallback:
+
+- if no label is triggered -> `mixed/uncertain`
+
+## PSO hyperparameter deduction
+
+Implemented in `recommend_pso_coefficients(...)`.
+
+### Fixed mode coefficients
+
+Base values:
+
+- `w = 0.68`
+- `c1 = 1.35`
+- `c2 = 1.55`
+
+Rule-based adjustments:
+
+- if `multimodal`: `c2 += 0.15`, `c1 -= 0.10`
+- if `narrow-basin`: `w -= 0.08`, `c1 += 0.10`
+- if `smooth-macro` and not narrow: `w += 0.05`
+- if `lon_nodes >= 25` and `lon_density < 0.15`: `c2 += 0.10`
+- if `ac_len < 5`: `w -= 0.03`
+- if `info_h > 0.70`: `c2 += 0.05`
+- if `basin_width_median_norm < 0.04`: `w -= 0.03`, `c1 += 0.05`
+
+Bounds and normalization:
+
+- `w in [0.50, 0.78]`
+- `c1 in [0.90, 2.20]`
+- `c2 in [1.10, 2.40]`
+- normalize `(c1 + c2)` to stay in `[2.0, 3.0]`
+
+The resulting fixed recommendation is stored as:
+
+- `pso_recommendation.recommended`
+
+### Two-phase mode coefficients
+
+Derived directly from fixed recommendation:
+
+- phase 1 (explore):
+  - `w1 = min(0.75, w + 0.05)`
+  - `c11 = max(0.95, c1 - 0.10)`
+  - `c21 = min(2.30, c2 + 0.10)`
+- phase 2 (refine):
+  - `w2 = max(0.52, w - 0.08)`
+  - `c12 = min(2.00, c1 + 0.10)`
+  - `c22 = max(1.20, c2 - 0.10)`
+- switch point:
+  - `switch_fraction_of_iters = 0.60`
+
+This schedule is stored as:
+
+- `pso_recommendation.schedule`
+
+### Swarm size and iteration deduction
+
+Also produced by landscape analysis:
+
+- `swarm_base = 10 * dim`
+- `swarm_size = clip(swarm_base + 5*multimodal_score + 5*narrow_score + (10 if lon_nodes>=20 else 0), 30, 150)`
+
+- `iters_base = 200`
+- `n_iters = clip(iters_base + 20*multimodal_score + 30*narrow_score + (50 if lon_nodes>=30 else 0) + (50 if ac_len<3 else 0), 150, 600)`
+
+These are written to:
+
+- `pso_recommendation.recommended_swarm_size`
+- `pso_recommendation.recommended_iters`
 
 ## How to run
 
-### Full analysis (all four problems)
+From repository root:
 
 ```bash
-cd TrussLandscapeAnalysis
-python run_all_truss_landscapes.py
+python TrussLandscapeAnalysis/run_all_truss_landscapes.py
 ```
 
-This runs the expensive FEA-backed landscape analysis for all problems and saves results to
-`results/`.  For the 72-bar problems the run uses reduced sampling to remain tractable (~5–10 min
-total on a modern machine).
-
-**Options**
-
-| Flag | Default | Description |
-|---|---|---|
-| `--problems` | *(all)* | Comma-separated subset, e.g. `truss10_continuous,truss10_discrete` |
-| `--out-dir` | `TrussLandscapeAnalysis/results` | Output directory |
-| `--seed` | `2025` | Random seed |
-| `--walk-steps` | `2000` | Random-walk length per problem |
-| `--lon-starts` | `40` | LON construction start points |
-
-### Rebuild the comparative report only (fast, no FEA)
+Run one problem only:
 
 ```bash
-python rebuild_comparative_report.py
+python TrussLandscapeAnalysis/run_all_truss_landscapes.py --problems truss200_continuous
 ```
 
-Reads the saved per-problem JSON files, patches any missing `recommended_swarm_size` /
-`recommended_iters` fields, regenerates comparative plots and `comparative_landscape_report.md`.
+Important options:
 
----
+- `--problems` comma-separated IDs
+- `--seed`
+- `--n-ref`
+- `--walk-steps`
+- `--lon-starts`
+- `--basin-grid`
 
-## Output files
+## Outputs
 
-### Per-problem
+Per-problem folder: `TrussLandscapeAnalysis/results/<problem_id>/`
 
-| File | Contents |
-|---|---|
-| `<id>_landscape_metrics.json` | All numeric metrics + PSO recommendation (machine-readable) |
-| `<id>_landscape_report.txt` | Human-readable summary with classification, coefficients, rationale |
-| `<id>_autocorr.png` | Autocorrelation function of objective along random walks |
-| `<id>_information_content.png` | Information content H(ε) and M(ε) curves |
-| `<id>_basins_map.png` | 2-D basin-of-attraction slice around best local optimum |
-| `<id>_lon_basins.png` | LON basin-size distribution histogram |
+- `<id>_landscape_metrics.json`
+- `<id>_landscape_report.txt`
+- `<id>_autocorr.png`
+- `<id>_information_content.png`
+- `<id>_basins_map.png`
+- `<id>_lon_basins.png`
 
-### Comparative (in `results/`)
+Comparative files in `TrussLandscapeAnalysis/results/`:
 
-| File | Contents |
-|---|---|
-| `comparative_landscape_report.md` | Cross-problem markdown summary table + per-problem analysis |
-| `all_landscape_metrics.json` | All four problems' metrics in a single JSON array |
-| `comparison_landscape_scores.png` | Side-by-side classification scores |
-| `comparison_ruggedness_lon.png` | Autocorrelation length vs LON node count |
+- `all_landscape_metrics.json`
+- `comparative_landscape_report.md`
+- `comparison_landscape_scores.png`
+- `comparison_ruggedness_lon.png`
 
----
+## Using recommendations in PSO runs
 
-## Per-problem landscape findings
+The PSO runner (`PSO FEA/run_pso_fea.py`) loads these landscape outputs automatically.
 
-| Problem | Classification | AC Length | H(ε=0.05) | LON Nodes | Basin Width (med, norm) | w | c1 | c2 | Swarm | Iters |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 10-Bar Continuous | multimodal, narrow-basin | 4.46 | 0.752 | 30 | 0.0177 | 0.540 | 1.292 | 1.708 | 140 | 400 |
-| 10-Bar Discrete   | multimodal              | 13.04 | 0.736 | 29 | 0.1192 | 0.680 | 1.210 | 1.790 | 130 | 290 |
-| 72-Bar Continuous | multimodal, smooth-macro, narrow-basin | 486.1 | 0.706 | 14 | 0.0431 | 0.600 | 1.306 | 1.694 | 150 | 320 |
-| 72-Bar Discrete   | multimodal, smooth-macro | 22.08 | 0.803 | 8  | 0.0875 | 0.730 | 1.250 | 1.750 | 150 | 290 |
-
-### Key observations
-
-- **10-bar continuous** is the most challenging: short autocorrelation length (rugged), narrow
-  basins, and many local optima → lowest recommended inertia, strongest cognitive pull, largest
-  swarm (140 particles) and most iterations (400).
-- **10-bar discrete** is less rugged than continuous (discretisation regularises the landscape)
-  but still multimodal.  Larger basin width allows a slightly smaller swarm.
-- **72-bar continuous** has an extremely long autocorrelation length (smooth macro-funnel) yet
-  still contains narrow basins — reflecting the high-dimensional, grouped design variable
-  structure.  A moderately large swarm (150) covers the 16-dimensional space adequately.
-- **72-bar discrete** is the smoothest overall.  Fewer LON nodes and wider basins make it the
-  easiest to optimise — lower required iteration count.
-- All four problems are **multimodal** → `c2 > c1` is consistently recommended to prevent swarm
-  fragmentation across local basins.
-
----
-
-## Integration with PSO FEA
-
-The `PSO FEA/` folder loads these landscape metrics automatically via
-`PSO FEA/problem_adapters.py`.  When you call `run_pso_fea.py` or `run_batch_pso_fea.py`
-**without** explicit `--swarm-size` or `--iters` flags, the landscape-recommended values are
-used:
+Fixed mode:
 
 ```bash
-# Uses landscape-recommended swarm size and iterations for each problem
-python run_pso_fea.py --problem truss10_continuous --coeff-mode two-phase
-
-# Override only iterations, keep landscape-recommended swarm size
-python run_pso_fea.py --problem truss72_discrete --iters 500
+python "PSO FEA/run_pso_fea.py" --problem truss200_continuous --coeff-mode fixed
 ```
 
-The print output will indicate the source of each setting:
+Two-phase mode:
 
-```
-Swarm size: 140 (landscape-recommended)
-Iterations: 400 (landscape-recommended)
+```bash
+python "PSO FEA/run_pso_fea.py" --problem truss200_continuous --coeff-mode two-phase
 ```
 
-See [`PSO FEA/README.md`](../PSO%20FEA/README.md) for full PSO runner documentation.
+## Literature references
+
+[1] S. A. Kauffman, The Origins of Order, Oxford University Press, 1993.
+
+[2] E. D. Weinberger, "Correlated and uncorrelated fitness landscapes and how to tell the difference," Biological Cybernetics, 63, 325-336, 1990.
+
+[3] V. K. Vassilev, T. C. Fogarty, J. F. Miller, "Information characteristics and the structure of landscapes," Evolutionary Computation, 8(1), 31-60, 2000.
+
+[4] G. Ochoa, M. Tomassini, S. Verel, C. Darabos, "A study of NK landscapes' basins and local optima networks," GECCO, 2008.
+
+[5] M. Tomassini, S. Verel, G. Ochoa, "Complex-network analysis of combinatorial spaces: The NK landscape case," Physical Review E, 78, 066114, 2008.
+
+[6] F. Daolio, S. Verel, G. Ochoa, M. Tomassini, "Local optima networks of the quadratic assignment problem," IEEE CEC, 2010.
+
+[7] J. Kennedy, R. Eberhart, "Particle swarm optimization," IEEE ICNN, 1995.
+
+[8] Y. Shi, R. Eberhart, "A modified particle swarm optimizer," IEEE ICEC, 1998.
+
+[9] M. Clerc, J. Kennedy, "The particle swarm - explosion, stability, and convergence in a multidimensional complex space," IEEE TEC, 6(1), 58-73, 2002.
+
+Note:
+- This implementation combines multiple practical landscape proxies
+  (autocorrelation, information-content curves, LON structure, and basin-width probes)
+  rather than reproducing only one canonical protocol.

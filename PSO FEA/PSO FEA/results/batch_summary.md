@@ -1,20 +1,20 @@
 # PSO FEA Batch Summary
 
 - coefficient mode: `two-phase`
-- swarm size: `50`
-- iterations: `200`
+- swarm size: `landscape-recommended (per problem)`
+- iterations: `landscape-recommended (per problem)`
 - seed: `2026`
 
-| Problem | Mode | Best Mass | Max Disp | Max Stress | Final Feasible Fraction |
-|---|---|---:|---:|---:|---:|
-| 10-Bar Truss (Continuous) | two-phase | 5084.719130 | 1.999984 | 24.723662 | 0.960 |
-- Design variables (truss10_continuous): `[30.9801,  0.1327, 23.0472, 16.0115,  0.101 ,  0.5472,  7.6067, 21.538 ,
- 20.4771,  0.1745]`
-| 10-Bar Truss (Discrete Sections) | two-phase | 5560.223347 | 1.995821 | 14.439188 | 1.000 |
-- Design variables (truss10_discrete): `[30.  ,  1.62, 30.  , 15.5 ,  1.62,  1.62,  7.97, 22.9 , 19.9 ,  1.62]`
-| 72-Bar Truss (Continuous) | two-phase | 385.056532 | 0.249987 | 24.847301 | 0.660 |
-- Design variables (truss72_continuous): `[0.148 , 0.5752, 0.4813, 0.5268, 0.5179, 0.491 , 0.1052, 0.2671, 1.1411,
- 0.5015, 0.1272, 0.1029, 1.9667, 0.4953, 0.1033, 0.1005]`
-| 72-Bar Truss (Discrete Sections) | two-phase | 396.188550 | 0.249726 | 24.999463 | 0.860 |
-- Design variables (truss72_discrete): `[0.141, 0.563, 0.391, 0.563, 0.563, 0.563, 0.25 , 0.307, 1.266, 0.602,
- 0.111, 0.111, 1.563, 0.442, 0.111, 0.111]`
+| Problem | Mode | Swarm | Iters | Best Mass | Max Disp | Max Stress | Final Feasible Fraction |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 10-Bar Truss (Continuous) | two-phase | 140 | 400 | 5068.001730 | 1.999995 | 24.999689 | 0.936 |
+- Design variables (truss10_continuous): `[30.7497,  0.1045, 23.3359, 13.9191,  0.1001,  0.4209,  7.5252, 21.5508,
+ 21.8385,  0.1017]`
+| 10-Bar Truss (Discrete Sections) | two-phase | 130 | 290 | 5490.737892 | 1.998943 | 14.196928 | 1.000 |
+- Design variables (truss10_discrete): `[33.5 ,  1.62, 22.9 , 14.2 ,  1.62,  1.62,  7.97, 22.9 , 22.  ,  1.62]`
+| 72-Bar Truss (Continuous) | two-phase | 150 | 320 | 381.751037 | 0.249967 | 24.951718 | 0.640 |
+- Design variables (truss72_continuous): `[0.1572, 0.5311, 0.3979, 0.5803, 0.5228, 0.5148, 0.1032, 0.1036, 1.487 ,
+ 0.5145, 0.1126, 0.1082, 1.8784, 0.4891, 0.103 , 0.1005]`
+| 72-Bar Truss (Discrete Sections) | two-phase | 150 | 290 | 389.334170 | 0.249817 | 20.755116 | 1.000 |
+- Design variables (truss72_discrete): `[0.196, 0.563, 0.391, 0.563, 0.563, 0.442, 0.111, 0.111, 1.228, 0.563,
+ 0.111, 0.111, 1.99 , 0.563, 0.111, 0.111]`
