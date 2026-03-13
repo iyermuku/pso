@@ -101,6 +101,8 @@ def _load_recommendation(problem_id: str) -> Dict[str, Any]:
         "truss10_discrete":  {"w": 0.680, "c1": 1.210, "c2": 1.790, "swarm_size": 120, "iters": 350},
         "truss72_continuous": {"w": 0.600, "c1": 1.306, "c2": 1.694, "swarm_size": 200, "iters": 300},
         "truss72_discrete":  {"w": 0.730, "c1": 1.250, "c2": 1.750, "swarm_size": 200, "iters": 350},
+        "truss25_continuous": {"w": 0.680, "c1": 1.350, "c2": 1.550, "swarm_size": 85, "iters": 250},
+        "truss25_discrete":   {"w": 0.700, "c1": 1.300, "c2": 1.700, "swarm_size": 90, "iters": 280},
     }
     if problem_id not in fallback:
         raise KeyError(f"No recommendation found for {problem_id}")
@@ -418,6 +420,131 @@ def _make_200bar_continuous() -> TrussProblem:
     )
 
 
+def _make_25bar_continuous() -> TrussProblem:
+    base = ROOT / "PSO25BarTruss"
+    truss = _load_module("pso_fea_truss25_cont", base / "truss25.py")
+    rec = _load_recommendation("truss25_continuous")
+
+    u_allow = float(truss.U_ALLOW)
+    s_allow = float(truss.S_ALLOW)
+
+    def evaluate(x: np.ndarray) -> Dict[str, float]:
+        a8 = np.clip(np.asarray(x, dtype=float), truss.A_MIN, truss.A_MAX)
+        try:
+            res = truss.evaluate(a8)
+        except Exception:
+            return {
+                "objective": 1.0e12,
+                "mass": 1.0e12,
+                "constraint_violation": 1.0e6,
+                "feasible": 0.0,
+                "max_disp": float("inf"),
+                "max_stress": float("inf"),
+                "x_eval": a8.copy(),
+            }
+
+        mass      = float(res["mass"])
+        max_disp  = float(res["max_disp"])
+        max_stress = float(res["max_stress"])
+
+        dv = max(0.0, max_disp  - u_allow)
+        sv = max(0.0, max_stress - s_allow)
+
+        disp_norm   = dv / (u_allow  + 1e-12)
+        stress_norm = sv / (s_allow  + 1e-12)
+        j  = float(mass + 1e5 * disp_norm + 1e5 * stress_norm)
+        cv = dv + sv
+
+        return {
+            "objective":            float(j),
+            "mass":                 float(mass),
+            "constraint_violation": float(cv),
+            "feasible":             float(cv <= 1e-9),
+            "max_disp":             float(max_disp),
+            "max_stress":           float(max_stress),
+            "x_eval":               a8.copy(),
+        }
+
+    lo, hi = truss.grouped_design_bounds()
+    return TrussProblem(
+        problem_id="truss25_continuous",
+        label="25-Bar Space Truss (Continuous)",
+        lo=lo,
+        hi=hi,
+        recommended_w=rec["w"],
+        recommended_c1=rec["c1"],
+        recommended_c2=rec["c2"],
+        recommended_schedule=rec["schedule"],
+        recommended_swarm_size=rec["swarm_size"],
+        recommended_iters=rec["iters"],
+        evaluate=evaluate,
+    )
+
+
+def _make_25bar_discrete() -> TrussProblem:
+    base = ROOT / "PSO25BarDiscreteSectionsTruss"
+    truss = _load_module("pso_fea_truss25_disc", base / "truss25_discrete.py")
+    rec = _load_recommendation("truss25_discrete")
+    avail = np.asarray(truss.available_A, dtype=float)
+
+    u_allow = float(truss.U_ALLOW)
+    s_allow = float(truss.S_ALLOW)
+
+    def evaluate(x: np.ndarray) -> Dict[str, float]:
+        a8 = _snap_to_available(
+            np.clip(np.asarray(x, dtype=float), truss.A_MIN, truss.A_MAX), avail
+        )
+        try:
+            res = truss.evaluate(a8)
+        except Exception:
+            return {
+                "objective": 1.0e12,
+                "mass": 1.0e12,
+                "constraint_violation": 1.0e6,
+                "feasible": 0.0,
+                "max_disp": float("inf"),
+                "max_stress": float("inf"),
+                "x_eval": a8.copy(),
+            }
+
+        mass       = float(res["mass"])
+        max_disp   = float(res["max_disp"])
+        max_stress = float(res["max_stress"])
+
+        dv = max(0.0, max_disp  - u_allow)
+        sv = max(0.0, max_stress - s_allow)
+
+        disp_norm   = dv / (u_allow  + 1e-12)
+        stress_norm = sv / (s_allow  + 1e-12)
+        j  = float(mass + 1e5 * disp_norm + 1e5 * stress_norm)
+        cv = dv + sv
+
+        return {
+            "objective":            float(j),
+            "mass":                 float(mass),
+            "constraint_violation": float(cv),
+            "feasible":             float(cv <= 1e-9),
+            "max_disp":             float(max_disp),
+            "max_stress":           float(max_stress),
+            "x_eval":               a8.copy(),
+        }
+
+    lo, hi = truss.grouped_design_bounds()
+    return TrussProblem(
+        problem_id="truss25_discrete",
+        label="25-Bar Space Truss (Discrete Sections)",
+        lo=lo,
+        hi=hi,
+        recommended_w=rec["w"],
+        recommended_c1=rec["c1"],
+        recommended_c2=rec["c2"],
+        recommended_schedule=rec["schedule"],
+        recommended_swarm_size=rec["swarm_size"],
+        recommended_iters=rec["iters"],
+        evaluate=evaluate,
+    )
+
+
 def get_problem(problem_id: str) -> TrussProblem:
     builders = {
         "truss10_continuous": _make_10bar_continuous,
@@ -425,6 +552,8 @@ def get_problem(problem_id: str) -> TrussProblem:
         "truss72_continuous": _make_72bar_continuous,
         "truss72_discrete": _make_72bar_discrete,
         "truss200_continuous": _make_200bar_continuous,
+        "truss25_continuous": _make_25bar_continuous,
+        "truss25_discrete": _make_25bar_discrete,
     }
     if problem_id not in builders:
         raise KeyError(f"Unknown problem_id: {problem_id}")
@@ -438,4 +567,6 @@ def list_problem_ids() -> list[str]:
         "truss72_continuous",
         "truss72_discrete",
         "truss200_continuous",
+        "truss25_continuous",
+        "truss25_discrete",
     ]

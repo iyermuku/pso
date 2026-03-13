@@ -275,6 +275,124 @@ def make_200bar_continuous() -> LandscapeProblem:
     )
 
 
+def make_25bar_continuous() -> LandscapeProblem:
+    base = ROOT / "PSO25BarTruss"
+    truss = _load_module("truss25_cont", base / "truss25.py")
+
+    state = {"avg_m": None, "avg_g": None}
+
+    # g includes both displacement violations (18) and stress violations (25) = 43 total
+    _G_DIM = len(truss.FREE_DOFS) + truss.N_ELEMS
+
+    def calibrate(n_ref: int, seed: int) -> None:
+        rng = np.random.default_rng(seed)
+        x_ref = rng.uniform(truss.A_MIN, truss.A_MAX, size=(n_ref, truss.N_GROUPS))
+        m_list = np.zeros(n_ref)
+        g_mat = np.zeros((n_ref, _G_DIM))
+        for i in range(n_ref):
+            res = truss.evaluate(x_ref[i])
+            dv = np.asarray(res["disp_violation"], dtype=float)
+            sv = np.asarray(res["stress_violation"], dtype=float)
+            g_mat[i] = np.concatenate([dv, sv])
+            m_list[i] = float(res["mass"])
+        state["avg_m"] = float(np.mean(m_list))
+        state["avg_g"] = np.mean(g_mat, axis=0)
+
+    def evaluate(x: np.ndarray):
+        a = np.clip(np.asarray(x, dtype=float), truss.A_MIN, truss.A_MAX)
+        try:
+            res = truss.evaluate(a)
+        except Exception:
+            return 1.0e12, 1.0e12, 1.0e6
+        dv = np.asarray(res["disp_violation"], dtype=float)
+        sv = np.asarray(res["stress_violation"], dtype=float)
+        g = np.concatenate([dv, sv])
+        mass = float(res["mass"])
+        if np.all(g <= 1e-12):
+            objective = mass
+        else:
+            avg_g = state["avg_g"]
+            avg_m = state["avg_m"]
+            denom = float(np.sum(avg_g**2))
+            if denom <= 1e-16:
+                objective = mass + 1e5 * float(np.sum(g))
+            else:
+                penalty = abs(avg_m) * (avg_g / denom)
+                objective = float(mass + np.dot(penalty, g))
+        cv = float(np.sum(np.maximum(g, 0.0)))
+        return objective, mass, cv
+
+    lo, hi = truss.grouped_design_bounds()
+    return LandscapeProblem(
+        problem_id="truss25_continuous",
+        label="25-Bar Space Truss (Continuous)",
+        lo=lo,
+        hi=hi,
+        evaluate=evaluate,
+        calibrate=calibrate,
+    )
+
+
+def make_25bar_discrete() -> LandscapeProblem:
+    base = ROOT / "PSO25BarDiscreteSectionsTruss"
+    truss = _load_module("truss25_disc", base / "truss25_discrete.py")
+    avail = np.asarray(truss.available_A, dtype=float)
+
+    state = {"avg_m": None, "avg_g": None}
+    _G_DIM = len(truss.FREE_DOFS) + truss.N_ELEMS
+
+    def calibrate(n_ref: int, seed: int) -> None:
+        rng = np.random.default_rng(seed)
+        raw = rng.uniform(truss.A_MIN, truss.A_MAX, size=(n_ref, truss.N_GROUPS))
+        x_ref = np.array([_snap_to_available(row, avail) for row in raw])
+        m_list = np.zeros(n_ref)
+        g_mat = np.zeros((n_ref, _G_DIM))
+        for i in range(n_ref):
+            res = truss.evaluate(x_ref[i])
+            dv = np.asarray(res["disp_violation"], dtype=float)
+            sv = np.asarray(res["stress_violation"], dtype=float)
+            g_mat[i] = np.concatenate([dv, sv])
+            m_list[i] = float(res["mass"])
+        state["avg_m"] = float(np.mean(m_list))
+        state["avg_g"] = np.mean(g_mat, axis=0)
+
+    def evaluate(x: np.ndarray):
+        a = _snap_to_available(
+            np.clip(np.asarray(x, dtype=float), truss.A_MIN, truss.A_MAX), avail
+        )
+        try:
+            res = truss.evaluate(a)
+        except Exception:
+            return 1.0e12, 1.0e12, 1.0e6
+        dv = np.asarray(res["disp_violation"], dtype=float)
+        sv = np.asarray(res["stress_violation"], dtype=float)
+        g = np.concatenate([dv, sv])
+        mass = float(res["mass"])
+        if np.all(g <= 1e-12):
+            objective = mass
+        else:
+            avg_g = state["avg_g"]
+            avg_m = state["avg_m"]
+            denom = float(np.sum(avg_g**2))
+            if denom <= 1e-16:
+                objective = mass + 1e5 * float(np.sum(g))
+            else:
+                penalty = abs(avg_m) * (avg_g / denom)
+                objective = float(mass + np.dot(penalty, g))
+        cv = float(np.sum(np.maximum(g, 0.0)))
+        return objective, mass, cv
+
+    lo, hi = truss.grouped_design_bounds()
+    return LandscapeProblem(
+        problem_id="truss25_discrete",
+        label="25-Bar Space Truss (Discrete Sections)",
+        lo=lo,
+        hi=hi,
+        evaluate=evaluate,
+        calibrate=calibrate,
+    )
+
+
 def get_all_truss_problems() -> list[LandscapeProblem]:
     return [
         make_10bar_continuous(),
@@ -282,4 +400,6 @@ def get_all_truss_problems() -> list[LandscapeProblem]:
         make_72bar_continuous_v2(),
         make_72bar_discrete(),
         make_200bar_continuous(),
+        make_25bar_continuous(),
+        make_25bar_discrete(),
     ]

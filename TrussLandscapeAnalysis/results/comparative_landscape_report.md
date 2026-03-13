@@ -12,21 +12,24 @@ This report compares objective landscapes for all truss problems in the reposito
 
 | Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Recommended (w,c1,c2) | Swarm Size | Iterations |
 |---|---|---:|---:|---:|---:|---:|---|---:|---:|
-| 200-Bar Planar Truss (Continuous) | multimodal | 29.101 | 0.870 | 14 | 0.071 | 0.1192 | (0.680, 1.250, 1.750) | 150 | 290 |
+| 25-Bar Space Truss (Discrete Sections) | multimodal, narrow-basin | 1.454 | 0.408 | 30 | 0.093 | 0.0304 | (0.540, 1.313, 1.688) | 115 | 430 |
 
 ## Per-Problem Interpretation and PSO Settings
 
-### 200-Bar Planar Truss (Continuous)
-- Landscape class: **multimodal**
-- Recommended fixed coefficients: **w=0.680, c1=1.250, c2=1.750**
-- Recommended swarm size: **150**
-- Recommended iterations: **290**
-- 2-phase schedule: phase-1(w=0.730, c1=1.150, c2=1.850) -> phase-2(w=0.600, c1=1.350, c2=1.650)
+### 25-Bar Space Truss (Discrete Sections)
+- Landscape class: **multimodal, narrow-basin**
+- Recommended fixed coefficients: **w=0.540, c1=1.313, c2=1.688**
+- Recommended swarm size: **115**
+- Recommended iterations: **430**
+- 2-phase schedule: phase-1(w=0.590, c1=1.213, c2=1.788) -> phase-2(w=0.520, c1=1.413, c2=1.587)
 - Rationale:
   - Multimodality: raise social pull for swarm consensus across local basins.
-  - High information content: increase exploitation pressure after discovery.
-  - Swarm size 150: 10×dim=290 base +15 multimodal +5 narrow, clipped to [30, 150].
-  - Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600].
+  - Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+  - Many weakly connected attractors: increase social attraction to reduce swarm fragmentation.
+  - Short autocorrelation length: lower inertia to avoid overshoot.
+  - Very narrow basin estimate: damp momentum and increase pbest guidance.
+  - Swarm size 115: 10×dim=80 base +10 multimodal +15 narrow +10 LON, clipped to [30, 150].
+  - Iterations 430: 200 base +40 multimodal +90 narrow +50 LON +50 ruggedness, clipped to [150, 600].
 
 ## Cross-Problem Takeaways
 - Problems with higher LON node counts and higher information content are more multimodal/rugged.
