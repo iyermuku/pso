@@ -19,10 +19,12 @@ class LandscapeProblem:
     calibrate: Callable[[int, int], None] | None = None
 
     def sample(self, rng: np.random.Generator, n: int) -> np.ndarray:
+        """Draw n uniform samples within the problem bounds."""
         return rng.uniform(self.lo, self.hi, size=(n, len(self.lo)))
 
 
 def _lhs(n_samples: int, n_dim: int, rng: np.random.Generator) -> np.ndarray:
+    """Generate a Latin hypercube sample matrix in [0, 1]^n_dim."""
     u = rng.random((n_samples, n_dim))
     grid = (np.arange(n_samples)[:, None] + u) / n_samples
     samples = np.zeros_like(grid)
@@ -32,6 +34,7 @@ def _lhs(n_samples: int, n_dim: int, rng: np.random.Generator) -> np.ndarray:
 
 
 def _clip_reflect(x: np.ndarray, lo: np.ndarray, hi: np.ndarray) -> np.ndarray:
+    """Reflect values crossing bounds, then clip to enforce feasibility."""
     y = x.copy()
     below = y < lo
     above = y > hi
@@ -41,6 +44,7 @@ def _clip_reflect(x: np.ndarray, lo: np.ndarray, hi: np.ndarray) -> np.ndarray:
 
 
 def evaluate_many(problem: LandscapeProblem, x: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Evaluate objective, mass, and constraint violation for each design in x."""
     n = x.shape[0]
     j = np.zeros(n)
     m = np.zeros(n)
@@ -56,6 +60,7 @@ def random_walk_series(
     n_steps: int,
     step_frac: float,
 ) -> np.ndarray:
+    """Sample objective values along a bounded Gaussian random walk."""
     x = rng.uniform(problem.lo, problem.hi)
     span = problem.hi - problem.lo
     vals = np.zeros(n_steps)
@@ -69,6 +74,7 @@ def random_walk_series(
 
 
 def autocorrelation(x: np.ndarray, max_lag: int) -> np.ndarray:
+    """Compute normalized autocorrelation up to max_lag for a 1D series."""
     y = x - np.mean(x)
     var = np.var(y)
     if var < 1e-14:
@@ -81,11 +87,13 @@ def autocorrelation(x: np.ndarray, max_lag: int) -> np.ndarray:
 
 
 def autocorrelation_length(ac: np.ndarray) -> float:
+    """Estimate correlation length from lag-1 autocorrelation magnitude."""
     r1 = float(np.clip(abs(ac[1]), 1e-8, 0.999999))
     return float(-1.0 / np.log(r1))
 
 
 def information_content(series: np.ndarray, eps_values: np.ndarray) -> Dict[str, np.ndarray]:
+    """Compute information-content descriptors H(eps) and M(eps) for a series."""
     d = np.diff(series)
     s = np.std(d)
     if s < 1e-14:
@@ -125,6 +133,7 @@ def local_descent(
     init_step_frac: float = 0.12,
     min_step_frac: float = 1e-3,
 ) -> Tuple[np.ndarray, float]:
+    """Run coordinate-wise local descent with adaptive step halving."""
     x = x0.copy()
     f, _, _ = problem.evaluate(x)
     span = problem.hi - problem.lo
@@ -155,6 +164,7 @@ def local_descent(
 
 
 def _normalized_distance(x: np.ndarray, y: np.ndarray, lo: np.ndarray, hi: np.ndarray) -> float:
+    """Return Euclidean distance after scaling each dimension to [0, 1] span."""
     z = (x - y) / (hi - lo)
     return float(np.linalg.norm(z))
 
@@ -167,6 +177,7 @@ def cluster_minima(
     dist_tol: float = 0.05,
     f_tol: float = 1e-3,
 ) -> Tuple[np.ndarray, List[float], np.ndarray]:
+    """Cluster local minima into attractors using distance and objective tolerances."""
     centers: List[np.ndarray] = []
     center_vals: List[float] = []
     labels = np.zeros(len(minima), dtype=int)
@@ -193,6 +204,7 @@ def lon_structure(
     n_starts: int = 36,
     n_perturb: int = 5,
 ) -> Dict:
+    """Build a local-optima-network approximation and basin statistics."""
     s01 = _lhs(n_starts, len(problem.lo), rng)
     starts = problem.lo + s01 * (problem.hi - problem.lo)
 
@@ -243,6 +255,7 @@ def lon_structure(
 
 
 def sensitivity_dims(problem: LandscapeProblem, x_ref: np.ndarray) -> Tuple[int, int, np.ndarray]:
+    """Estimate per-dimension sensitivity via central finite differences."""
     span = problem.hi - problem.lo
     grad_mag = np.zeros(len(x_ref))
     for d in range(len(x_ref)):
@@ -266,6 +279,7 @@ def basin_map_2d(
     dim_j: int,
     n_grid: int = 26,
 ) -> Dict:
+    """Map attractor IDs on a 2D slice spanned by two sensitive dimensions."""
     ai = np.linspace(problem.lo[dim_i], problem.hi[dim_i], n_grid)
     aj = np.linspace(problem.lo[dim_j], problem.hi[dim_j], n_grid)
     ids = np.zeros((n_grid, n_grid), dtype=int)
@@ -289,6 +303,7 @@ def basin_map_2d(
 
 
 def smoothness_metrics(problem: LandscapeProblem, rng: np.random.Generator, n_pairs: int = 300) -> Dict[str, float]:
+    """Estimate landscape smoothness from local slope distribution statistics."""
     span = problem.hi - problem.lo
     slopes = np.zeros(n_pairs)
     for k in range(n_pairs):
@@ -314,6 +329,7 @@ def narrow_basin_metrics(
     n_dirs: int = 32,
     rise_abs: float = 100.0,
 ) -> Dict[str, float]:
+    """Estimate basin narrowness by radial distance to a target objective rise."""
     span = problem.hi - problem.lo
     widths = []
     for _ in range(n_dirs):
@@ -346,6 +362,7 @@ def classify_landscape(
     smooth: Dict[str, float],
     narrow: Dict[str, float],
 ) -> Dict[str, object]:
+    """Assign qualitative landscape classes using heuristic metric thresholds."""
     multimodal_score = 0
     if lon_nodes >= 4:
         multimodal_score += 1
@@ -404,6 +421,7 @@ def recommend_pso_coefficients(
     narrow: Dict[str, float],
     n_dim: int = 10,
 ) -> Dict[str, object]:
+    """Produce PSO coefficient, swarm-size, and iteration recommendations."""
     labels = classes["labels"]
     has_multimodal = "multimodal" in labels
     has_narrow = "narrow-basin" in labels
@@ -512,6 +530,7 @@ def _plot_problem_outputs(
     lon_basin_sizes: np.ndarray,
     lon_center_vals: np.ndarray,
 ) -> None:
+    """Generate and save diagnostic plots for autocorrelation, info content, and basins."""
     lags = np.arange(len(ac))
     plt.figure(figsize=(7, 4.5))
     plt.plot(lags, ac, linewidth=2)
@@ -567,6 +586,7 @@ def analyze_problem(
     lon_perturb: int = 4,
     basin_grid: int = 24,
 ) -> Dict[str, object]:
+    """Run full landscape analysis, save outputs, and return computed metrics."""
     out_dir.mkdir(parents=True, exist_ok=True)
     if problem.calibrate is not None:
         problem.calibrate(n_ref, seed)

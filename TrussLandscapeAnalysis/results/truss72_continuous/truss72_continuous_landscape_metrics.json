@@ -54,6 +54,8 @@
       "c2": 1.694
     },
     "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 150,
+    "recommended_iters": 320,
     "schedule": {
       "phase_1_explore": {
         "w": 0.6500000000000001,
@@ -73,8 +75,6 @@
       "High information content: increase exploitation pressure after discovery.",
       "Swarm size 150: 10\u00d7dim=160 base +15 multimodal +10 narrow, clipped to [30, 150].",
       "Iterations 320: 200 base +60 multimodal +60 narrow, clipped to [150, 600]."
-    ],
-    "recommended_swarm_size": 150,
-    "recommended_iters": 320
+    ]
   }
 }

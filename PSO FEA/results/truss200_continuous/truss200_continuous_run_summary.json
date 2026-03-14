@@ -1,12 +1,12 @@
 {
   "problem_id": "truss200_continuous",
   "label": "200-Bar Planar Truss (Continuous)",
+  "coefficient_mode": "two-phase",
   "recommended_coefficients": {
     "w": 0.7300000000000001,
     "c1": 1.15,
     "c2": 1.85
   },
-  "coefficient_mode": "two-phase",
   "recommended_schedule": {
     "phase_1_explore": {
       "w": 0.7300000000000001,

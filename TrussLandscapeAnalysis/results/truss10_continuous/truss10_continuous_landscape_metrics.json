@@ -48,6 +48,8 @@
       "c2": 1.708
     },
     "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 140,
+    "recommended_iters": 400,
     "schedule": {
       "phase_1_explore": {
         "w": 0.5900000000000001,
@@ -70,8 +72,6 @@
       "Very narrow basin estimate: damp momentum and increase pbest guidance.",
       "Swarm size 140: 10\u00d7dim=100 base +15 multimodal +15 narrow +10 LON, clipped to [30, 150].",
       "Iterations 400: 200 base +60 multimodal +90 narrow +50 LON, clipped to [150, 600]."
-    ],
-    "recommended_swarm_size": 140,
-    "recommended_iters": 400
+    ]
   }
 }

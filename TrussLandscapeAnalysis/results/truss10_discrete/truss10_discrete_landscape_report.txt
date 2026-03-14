@@ -10,11 +10,15 @@ Basin width median (norm): 0.1192
 
 Recommended PSO coefficients:
 w=0.680, c1=1.210, c2=1.790
+Recommended swarm size: 130
+Recommended iterations: 290
 
 Reasoning:
 - Multimodality: raise social pull for swarm consensus across local basins.
 - Many weakly connected attractors: increase social attraction to reduce swarm fragmentation.
 - High information content: increase exploitation pressure after discovery.
+- Swarm size 130: 10×dim=100 base +15 multimodal +5 narrow +10 LON, clipped to [30, 150].
+- Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600].
 
 Generated plots:
 - truss10_discrete_autocorr.png

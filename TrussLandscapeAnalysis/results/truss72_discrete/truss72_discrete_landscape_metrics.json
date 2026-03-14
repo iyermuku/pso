@@ -2,79 +2,80 @@
   "problem_id": "truss72_discrete",
   "label": "72-Bar Truss (Discrete Sections)",
   "seed": 2026,
-  "autocorrelation_length": 22.076289120042265,
-  "information_content_H_eps005": 0.8027028233153932,
-  "information_content_M_eps005": 0.6111111111111112,
-  "lon_nodes": 8,
-  "lon_edge_density": 0.125,
-  "lon_basin_entropy": 3.0,
-  "best_local_objective": 1059.5511047811492,
+  "autocorrelation_length": 184.48183805384875,
+  "information_content_H_eps005": 0.792503262195589,
+  "information_content_M_eps005": 0.5369458128078818,
+  "lon_nodes": 14,
+  "lon_edge_density": 0.08241758241758242,
+  "lon_basin_entropy": 3.8073549220576055,
+  "best_local_objective": 1099.4180739227213,
   "best_local_design": [
-    0.18635586077772048,
-    1.1306375587308357,
+    5.929875025006479,
+    2.679088063425314,
+    0.8526783457226863,
+    2.8493764635825043,
+    2.070374508305438,
+    0.36523369971721786,
+    0.7431288210342413,
+    0.5185366224735042,
+    2.888927011415232,
+    1.1087021735172706,
     0.1,
-    6.349023837613532,
-    2.419499263376359,
-    0.691708732012257,
+    3.6320582950763605,
+    1.8708103600063934,
+    0.22048131413954541,
     0.1,
-    0.1,
-    0.39883338253876177,
-    0.6184037889234415,
-    0.4136069974008898,
-    0.6357515944441157,
-    1.7282420265492269,
-    1.0840251890652473,
-    0.48542788418804106,
-    8.911245964300608
+    0.6831052577880903
   ],
   "top_sensitivity_dims": [
-    15,
-    13
+    13,
+    5
   ],
   "top_sensitivity_magnitude": [
-    131.9932658214894,
-    126.8460379963545
+    162815.39869001918,
+    58378.42045742433
   ],
-  "slope_median": 499.29759221962104,
-  "slope_q90": 1385.501328734825,
-  "slope_std": 35714.93347666906,
-  "basin_width_mean_norm": 0.10291208791208792,
-  "basin_width_median_norm": 0.0875,
-  "basin_width_q10_norm": 0.055769230769230765,
+  "slope_median": 500.67272861286665,
+  "slope_q90": 1352.8117566683025,
+  "slope_std": 35750.77768854422,
+  "basin_width_mean_norm": 0.07480769230769231,
+  "basin_width_median_norm": 0.036730769230769234,
+  "basin_width_q10_norm": 0.01769230769230769,
   "rise_abs": 100.0,
-  "classification_labels": "multimodal, smooth-macro",
-  "classification_summary": "Landscape class: multimodal, smooth-macro | multimodal_score=3, smooth_score=2, narrow_score=1",
+  "classification_labels": "multimodal, smooth-macro, narrow-basin",
+  "classification_summary": "Landscape class: multimodal, smooth-macro, narrow-basin | multimodal_score=3, smooth_score=2, narrow_score=2",
   "classification_multimodal_score": 3,
   "classification_smooth_score": 2,
-  "classification_narrow_score": 1,
+  "classification_narrow_score": 2,
   "pso_recommendation": {
     "recommended": {
-      "w": 0.73,
-      "c1": 1.25,
-      "c2": 1.75
+      "w": 0.57,
+      "c1": 1.333,
+      "c2": 1.667
     },
     "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 150,
+    "recommended_iters": 320,
     "schedule": {
       "phase_1_explore": {
-        "w": 0.75,
-        "c1": 1.15,
-        "c2": 1.85
+        "w": 0.6200000000000001,
+        "c1": 1.2333333333333334,
+        "c2": 1.7666666666666666
       },
       "phase_2_refine": {
-        "w": 0.6500000000000001,
-        "c1": 1.35,
-        "c2": 1.65
+        "w": 0.52,
+        "c1": 1.4333333333333336,
+        "c2": 1.5666666666666664
       },
       "switch_fraction_of_iters": 0.6
     },
     "rationale": [
       "Multimodality: raise social pull for swarm consensus across local basins.",
-      "Smooth macro-landscape: slightly higher inertia supports broader traversal.",
+      "Narrow basin: reduce inertia and retain cognitive pull for local refinement.",
       "High information content: increase exploitation pressure after discovery.",
-      "Swarm size 150: 10\u00d7dim=160 base +15 multimodal +5 narrow, clipped to [30, 150].",
-      "Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600]."
-    ],
-    "recommended_swarm_size": 150,
-    "recommended_iters": 290
+      "Very narrow basin estimate: damp momentum and increase pbest guidance.",
+      "Swarm size 150: 10\u00d7dim=160 base +15 multimodal +10 narrow, clipped to [30, 150].",
+      "Iterations 320: 200 base +60 multimodal +60 narrow, clipped to [150, 600]."
+    ]
   }
 }
