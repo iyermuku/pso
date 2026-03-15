@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -29,6 +30,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--out-dir", type=str, default="PSO FEA/results")
     parser.add_argument("--coeff-mode", type=str, default="fixed", choices=["fixed", "two-phase"])
+    parser.add_argument(
+        "--seed-optima-pct",
+        type=float,
+        default=0.0,
+        help="Use up to this percent of swarm as seeded particles from remembered detected optima",
+    )
     return parser.parse_args()
 
 
@@ -82,6 +89,7 @@ def main() -> None:
     out_root.mkdir(parents=True, exist_ok=True)
 
     problem = get_problem(args.problem)
+    t0 = time.perf_counter()
     result = run_fixed_coeff_pso(
         problem=problem,
         swarm_size=args.swarm_size,
@@ -90,7 +98,9 @@ def main() -> None:
         v_frac=0.20,
         reflection_on_violation=True,
         coeff_mode=args.coeff_mode,
+        seed_optima_pct=args.seed_optima_pct,
     )
+    pso_runtime_seconds = float(time.perf_counter() - t0)
 
     out_dir = out_root / problem.problem_id
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -103,6 +113,13 @@ def main() -> None:
         "recommended_schedule": result["recommended_schedule"],
         "swarm_size": result["swarm_size"],
         "iters": result["iters"],
+        "seed_optima_pct": result["seed_optima_pct"],
+        "seeded_particles_requested_max": result["seeded_particles_requested_max"],
+        "seeded_particles_count": result["seeded_particles_count"],
+        "seeded_particles": result["seeded_particles"],
+        "gbest_particle_name": result["gbest_particle_name"],
+        "seeded_particle_reached_gbest": result["seeded_particle_reached_gbest"],
+        "pso_runtime_seconds": pso_runtime_seconds,
         "design_variables": result["best_design_variables"].tolist(),
         "best_mass": float(result["gbest_mass"]),
         "max_displacement": float(result["best_max_disp"]),
@@ -123,6 +140,13 @@ def main() -> None:
     iters_src = "user-specified" if args.iters is not None else "landscape-recommended"
     print(f"Swarm size: {result['swarm_size']} ({swarm_src})")
     print(f"Iterations: {result['iters']} ({iters_src})")
+    print(
+        f"Seeded optima: {result['seeded_particles_count']} particles "
+        f"(requested up to {result['seeded_particles_requested_max']} from {result['seed_optima_pct']:.2f}% of swarm)"
+    )
+    print(f"Final gbest particle: {result['gbest_particle_name']}")
+    print(f"Seeded particle reached gbest: {result['seeded_particle_reached_gbest']}")
+    print(f"PSO runtime: {pso_runtime_seconds:.2f} s")
     print(f"Best mass: {result['gbest_mass']:.6f}")
     print(f"Max displacement (best design): {result['best_max_disp']:.6f}")
     print(f"Max stress (best design): {result['best_max_stress']:.6f}")

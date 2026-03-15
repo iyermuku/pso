@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -84,16 +85,17 @@ def _write_comparative_report(out_dir: Path, metrics: list[dict]) -> None:
     lines.append("")
     lines.append("## Summary Table")
     lines.append("")
-    lines.append("| Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Recommended (w,c1,c2) | Swarm Size | Iterations |")
-    lines.append("|---|---|---:|---:|---:|---:|---:|---|---:|---:|")
+    lines.append("| Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Time (s) | Recommended (w,c1,c2) | Swarm Size | Iterations |")
+    lines.append("|---|---|---:|---:|---:|---:|---:|---:|---|---:|---:|")
     for m in metrics:
         rec = m["pso_recommendation"]["recommended"]
         sw = m["pso_recommendation"].get("recommended_swarm_size", "—")
         ni = m["pso_recommendation"].get("recommended_iters", "—")
+        t_sec = float(m.get("analysis_runtime_seconds", 0.0))
         lines.append(
             f"| {m['label']} | {m['classification_labels']} | {m['autocorrelation_length']:.3f} | "
             f"{m['information_content_H_eps005']:.3f} | {m['lon_nodes']} | {m['lon_edge_density']:.3f} | "
-            f"{m['basin_width_median_norm']:.4f} | ({rec['w']:.3f}, {rec['c1']:.3f}, {rec['c2']:.3f}) | {sw} | {ni} |"
+            f"{m['basin_width_median_norm']:.4f} | {t_sec:.2f} | ({rec['w']:.3f}, {rec['c1']:.3f}, {rec['c2']:.3f}) | {sw} | {ni} |"
         )
     lines.append("")
 
@@ -162,6 +164,7 @@ def main() -> None:
             lon_perturb = 4
             basin_grid = args.basin_grid
 
+        t0 = time.perf_counter()
         metrics = analyze_problem(
             problem=problem,
             out_dir=p_out,
@@ -173,12 +176,15 @@ def main() -> None:
             lon_perturb=lon_perturb,
             basin_grid=basin_grid,
         )
+        elapsed_s = float(time.perf_counter() - t0)
+        metrics["analysis_runtime_seconds"] = elapsed_s
         all_metrics.append(metrics)
         print(
             f"{problem.problem_id}: {metrics['classification_labels']} | "
             f"rec=({metrics['pso_recommendation']['recommended']['w']:.3f},"
             f"{metrics['pso_recommendation']['recommended']['c1']:.3f},"
-            f"{metrics['pso_recommendation']['recommended']['c2']:.3f})"
+            f"{metrics['pso_recommendation']['recommended']['c2']:.3f}) | "
+            f"time={elapsed_s:.2f}s"
         )
 
     (out_dir / "all_landscape_metrics.json").write_text(json.dumps(all_metrics, indent=2), encoding="utf-8")

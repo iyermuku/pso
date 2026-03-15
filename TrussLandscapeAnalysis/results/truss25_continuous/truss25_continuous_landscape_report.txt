@@ -12,6 +12,7 @@ Recommended PSO coefficients:
 w=0.570, c1=1.286, c2=1.714
 Recommended swarm size: 115
 Recommended iterations: 430
+Detected local optima (LON centers): 30
 
 Reasoning:
 - Multimodality: raise social pull for swarm consensus across local basins.

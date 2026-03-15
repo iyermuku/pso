@@ -439,6 +439,7 @@ def recommend_pso_coefficients(
         c2 += 0.15
         c1 -= 0.10
         rationale.append("Multimodality: raise social pull for swarm consensus across local basins.")
+
     if has_narrow:
         w -= 0.08
         c1 += 0.10
@@ -635,6 +636,18 @@ def analyze_problem(
         n_dim=problem.lo.size,
     )
 
+    center_vals = np.asarray(lon["center_vals"], dtype=float)
+    center_order = np.argsort(center_vals)
+    detected_optima = [
+        {
+            "rank": int(rank + 1),
+            "objective": float(center_vals[idx]),
+            "design_variables": np.asarray(lon["centers"][idx], dtype=float).tolist(),
+            "basin_size": int(lon["basin_sizes"][idx]),
+        }
+        for rank, idx in enumerate(center_order)
+    ]
+
     metrics: Dict[str, object] = {
         "problem_id": problem.problem_id,
         "label": problem.label,
@@ -661,6 +674,7 @@ def analyze_problem(
         "classification_multimodal_score": int(classes["multimodal_score"]),
         "classification_smooth_score": int(classes["smooth_score"]),
         "classification_narrow_score": int(classes["narrow_score"]),
+        "detected_optima": detected_optima,
         "pso_recommendation": recommendation,
     }
 
@@ -696,6 +710,7 @@ def analyze_problem(
         ),
         f"Recommended swarm size: {recommendation['recommended_swarm_size']}",
         f"Recommended iterations: {recommendation['recommended_iters']}",
+        f"Detected local optima (LON centers): {len(detected_optima)}",
         "",
         "Reasoning:",
     ]

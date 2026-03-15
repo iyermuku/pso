@@ -1,0 +1,54 @@
+{
+  "problem_id": "truss72_discrete",
+  "label": "72-Bar Truss (Discrete Sections)",
+  "coefficient_mode": "two-phase",
+  "recommended_coefficients": {
+    "w": 0.6200000000000001,
+    "c1": 1.2333333333333334,
+    "c2": 1.7666666666666666
+  },
+  "recommended_schedule": {
+    "phase_1_explore": {
+      "w": 0.6200000000000001,
+      "c1": 1.2333333333333334,
+      "c2": 1.7666666666666666
+    },
+    "phase_2_refine": {
+      "w": 0.52,
+      "c1": 1.4333333333333336,
+      "c2": 1.5666666666666664
+    },
+    "switch_fraction_of_iters": 0.6
+  },
+  "swarm_size": 150,
+  "iters": 320,
+  "seed_optima_pct": 0.0,
+  "seeded_particles_requested_max": 0,
+  "seeded_particles_count": 0,
+  "seeded_particles": [],
+  "gbest_particle_name": "lhs_particle_000",
+  "seeded_particle_reached_gbest": false,
+  "pso_runtime_seconds": 290.11942780000004,
+  "design_variables": [
+    0.196,
+    0.602,
+    0.442,
+    0.602,
+    0.442,
+    0.563,
+    0.111,
+    0.111,
+    1.228,
+    0.563,
+    0.111,
+    0.111,
+    1.8,
+    0.442,
+    0.111,
+    0.111
+  ],
+  "best_mass": 389.82779287603046,
+  "max_displacement": 0.24993956807901682,
+  "max_stress": 20.759326544790508,
+  "final_feasible_fraction": 1.0
+}

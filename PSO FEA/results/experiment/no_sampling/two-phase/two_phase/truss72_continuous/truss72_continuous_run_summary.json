@@ -1,0 +1,54 @@
+{
+  "problem_id": "truss72_continuous",
+  "label": "72-Bar Truss (Continuous)",
+  "coefficient_mode": "two-phase",
+  "recommended_coefficients": {
+    "w": 0.6500000000000001,
+    "c1": 1.2064516129032257,
+    "c2": 1.793548387096774
+  },
+  "recommended_schedule": {
+    "phase_1_explore": {
+      "w": 0.6500000000000001,
+      "c1": 1.2064516129032257,
+      "c2": 1.793548387096774
+    },
+    "phase_2_refine": {
+      "w": 0.5200000000000001,
+      "c1": 1.4064516129032258,
+      "c2": 1.593548387096774
+    },
+    "switch_fraction_of_iters": 0.6
+  },
+  "swarm_size": 150,
+  "iters": 320,
+  "seed_optima_pct": 0.0,
+  "seeded_particles_requested_max": 0,
+  "seeded_particles_count": 0,
+  "seeded_particles": [],
+  "gbest_particle_name": "lhs_particle_077",
+  "seeded_particle_reached_gbest": false,
+  "pso_runtime_seconds": 410.240123,
+  "design_variables": [
+    0.157205983245284,
+    0.5310902736079582,
+    0.3979099235338411,
+    0.5803461691432618,
+    0.5228211668582899,
+    0.5147563918508723,
+    0.10324917816586905,
+    0.1035856830972931,
+    1.4869721717102256,
+    0.5144700150107824,
+    0.11255009553727764,
+    0.10817286424525864,
+    1.878409750709603,
+    0.48908225245328824,
+    0.10298222235747596,
+    0.10048369967372923
+  ],
+  "best_mass": 381.7510370285896,
+  "max_displacement": 0.2499668374873426,
+  "max_stress": 24.951717716875223,
+  "final_feasible_fraction": 0.64
+}

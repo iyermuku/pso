@@ -26,6 +26,7 @@ class TrussProblem:
     recommended_schedule: Dict[str, Any]
     recommended_swarm_size: int
     recommended_iters: int
+    detected_optima: list[Dict[str, Any]]
     evaluate: Callable[[np.ndarray], Dict[str, float]]
 
     @property
@@ -86,6 +87,16 @@ def _load_recommendation(problem_id: str) -> Dict[str, Any]:
         schedule = pso_rec.get("schedule")
         if schedule is None:
             schedule = _build_fallback_schedule(float(rec["w"]), float(rec["c1"]), float(rec["c2"]))
+        detected_optima = payload.get("detected_optima", [])
+        if not detected_optima and "best_local_design" in payload:
+            detected_optima = [
+                {
+                    "rank": 1,
+                    "objective": float(payload.get("best_local_objective", np.nan)),
+                    "design_variables": list(payload["best_local_design"]),
+                    "basin_size": int(payload.get("lon_nodes", 1)),
+                }
+            ]
         return {
             "w": float(rec["w"]),
             "c1": float(rec["c1"]),
@@ -93,6 +104,7 @@ def _load_recommendation(problem_id: str) -> Dict[str, Any]:
             "schedule": schedule,
             "swarm_size": int(pso_rec.get("recommended_swarm_size", 60)),
             "iters": int(pso_rec.get("recommended_iters", 250)),
+            "detected_optima": detected_optima,
         }
 
     # Fallback values when landscape metrics JSON is not available.
@@ -114,6 +126,7 @@ def _load_recommendation(problem_id: str) -> Dict[str, Any]:
         "schedule": _build_fallback_schedule(float(base["w"]), float(base["c1"]), float(base["c2"])),
         "swarm_size": base["swarm_size"],
         "iters": base["iters"],
+        "detected_optima": [],
     }
 
 
@@ -188,6 +201,7 @@ def _make_10bar_continuous() -> TrussProblem:
         recommended_schedule=rec["schedule"],
         recommended_swarm_size=rec["swarm_size"],
         recommended_iters=rec["iters"],
+        detected_optima=rec["detected_optima"],
         evaluate=evaluate,
     )
 
@@ -265,6 +279,7 @@ def _make_10bar_discrete() -> TrussProblem:
         recommended_schedule=rec["schedule"],
         recommended_swarm_size=rec["swarm_size"],
         recommended_iters=rec["iters"],
+        detected_optima=rec["detected_optima"],
         evaluate=evaluate,
     )
 
@@ -337,6 +352,7 @@ def _make_72_evaluator(truss_mod, rec: Dict[str, float], problem_id: str, label:
         recommended_schedule=rec["schedule"],
         recommended_swarm_size=rec["swarm_size"],
         recommended_iters=rec["iters"],
+        detected_optima=rec["detected_optima"],
         evaluate=evaluate,
     )
 
@@ -416,6 +432,7 @@ def _make_200bar_continuous() -> TrussProblem:
         recommended_schedule=rec["schedule"],
         recommended_swarm_size=rec["swarm_size"],
         recommended_iters=rec["iters"],
+        detected_optima=rec["detected_optima"],
         evaluate=evaluate,
     )
 
@@ -477,6 +494,7 @@ def _make_25bar_continuous() -> TrussProblem:
         recommended_schedule=rec["schedule"],
         recommended_swarm_size=rec["swarm_size"],
         recommended_iters=rec["iters"],
+        detected_optima=rec["detected_optima"],
         evaluate=evaluate,
     )
 
@@ -541,6 +559,7 @@ def _make_25bar_discrete() -> TrussProblem:
         recommended_schedule=rec["schedule"],
         recommended_swarm_size=rec["swarm_size"],
         recommended_iters=rec["iters"],
+        detected_optima=rec["detected_optima"],
         evaluate=evaluate,
     )
 

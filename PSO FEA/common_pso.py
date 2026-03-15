@@ -74,6 +74,7 @@ def run_fixed_coeff_pso(
     v_frac: float = 0.20,
     reflection_on_violation: bool = True,
     coeff_mode: str = "fixed",
+    seed_optima_pct: float = 0.0,
 ) -> Dict[str, object]:
     # Use landscape-recommended defaults when caller does not override.
     if swarm_size is None:
@@ -89,6 +90,8 @@ def run_fixed_coeff_pso(
 
     if coeff_mode not in {"fixed", "two-phase"}:
         raise ValueError("coeff_mode must be one of: fixed, two-phase")
+    if seed_optima_pct < 0.0:
+        raise ValueError("seed_optima_pct must be >= 0")
 
     def coeffs_for_iter(iter_idx: int) -> Tuple[float, float, float]:
         if coeff_mode == "fixed":
@@ -105,8 +108,41 @@ def run_fixed_coeff_pso(
 
     w0, c10, c20 = coeffs_for_iter(0)
 
-    s01 = _lhs(swarm_size, d, rng)
-    x = lo + s01 * span
+    max_seed_slots = int(np.floor((seed_optima_pct / 100.0) * swarm_size))
+    available_optima = list(problem.detected_optima or [])
+    n_seed_target = int(min(max_seed_slots, len(available_optima), swarm_size))
+
+    particle_names = [f"lhs_particle_{i:03d}" for i in range(swarm_size)]
+    seeded_particles: List[Dict[str, object]] = []
+
+    x = np.zeros((swarm_size, d), dtype=float)
+    n_seed = 0
+    if n_seed_target > 0:
+        for i in range(n_seed_target):
+            opt = available_optima[i]
+            x_seed = np.asarray(opt["design_variables"], dtype=float)
+            if x_seed.shape[0] != d:
+                continue
+            x[n_seed] = np.clip(x_seed, lo, hi)
+            seed_name = f"seed_optimum_{int(opt.get('rank', i + 1)):03d}"
+            particle_names[n_seed] = seed_name
+            seeded_particles.append(
+                {
+                    "particle_index": n_seed,
+                    "particle_name": seed_name,
+                    "optimum_rank": int(opt.get("rank", i + 1)),
+                    "seed_objective": float(opt.get("objective", np.nan)),
+                    "seed_basin_size": int(opt.get("basin_size", 0)),
+                    "design_variables": x[n_seed].tolist(),
+                }
+            )
+            n_seed += 1
+
+    lhs_count = swarm_size - n_seed
+    if lhs_count > 0:
+        s01 = _lhs(lhs_count, d, rng)
+        x[n_seed:] = lo + s01 * span
+
     v = rng.uniform(-v_max, v_max, size=(swarm_size, d))
 
     pbest_x = np.zeros_like(x)
@@ -138,6 +174,7 @@ def run_fixed_coeff_pso(
     gbest_obj = float(pbest_obj[g_idx])
     gbest_cv = float(pbest_cv[g_idx])
     gbest_mass = float(pbest_mass[g_idx])
+    gbest_particle_name = particle_names[g_idx]
 
     obj_hist: List[float] = [gbest_obj]
     mass_hist: List[float] = [gbest_mass]
@@ -206,6 +243,7 @@ def run_fixed_coeff_pso(
         gbest_obj = float(pbest_obj[g_idx])
         gbest_cv = float(pbest_cv[g_idx])
         gbest_mass = float(pbest_mass[g_idx])
+        gbest_particle_name = particle_names[g_idx]
 
         obj_hist.append(gbest_obj)
         mass_hist.append(gbest_mass)
@@ -213,6 +251,8 @@ def run_fixed_coeff_pso(
         feas_frac_hist.append(float(np.mean(current_cv <= 1e-9)))
 
     final_eval = problem.evaluate(gbest_x)
+    seeded_name_set = {p["particle_name"] for p in seeded_particles}
+    seeded_particle_reached_gbest = gbest_particle_name in seeded_name_set
 
     return {
         "problem_id": problem.problem_id,
@@ -226,7 +266,13 @@ def run_fixed_coeff_pso(
         "gbest_objective": gbest_obj,
         "gbest_mass": gbest_mass,
         "gbest_cv": gbest_cv,
+        "gbest_particle_name": gbest_particle_name,
         "best_design_variables": gbest_x.copy(),
+        "seed_optima_pct": float(seed_optima_pct),
+        "seeded_particles_requested_max": int(max_seed_slots),
+        "seeded_particles_count": int(n_seed),
+        "seeded_particles": seeded_particles,
+        "seeded_particle_reached_gbest": bool(seeded_particle_reached_gbest),
         "best_max_disp": float(final_eval.get("max_disp", np.nan)),
         "best_max_stress": float(final_eval.get("max_stress", np.nan)),
         "objective_history": np.asarray(obj_hist),

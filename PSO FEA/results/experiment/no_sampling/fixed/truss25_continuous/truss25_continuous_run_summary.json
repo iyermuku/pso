@@ -1,0 +1,46 @@
+{
+  "problem_id": "truss25_continuous",
+  "label": "25-Bar Space Truss (Continuous)",
+  "coefficient_mode": "fixed",
+  "recommended_coefficients": {
+    "w": 0.57,
+    "c1": 1.286,
+    "c2": 1.714
+  },
+  "recommended_schedule": {
+    "phase_1_explore": {
+      "w": 0.6200000000000001,
+      "c1": 1.1857142857142857,
+      "c2": 1.8142857142857143
+    },
+    "phase_2_refine": {
+      "w": 0.52,
+      "c1": 1.385714285714286,
+      "c2": 1.614285714285714
+    },
+    "switch_fraction_of_iters": 0.6
+  },
+  "swarm_size": 115,
+  "iters": 430,
+  "seed_optima_pct": 0.0,
+  "seeded_particles_requested_max": 0,
+  "seeded_particles_count": 0,
+  "seeded_particles": [],
+  "gbest_particle_name": "lhs_particle_059",
+  "seeded_particle_reached_gbest": false,
+  "pso_runtime_seconds": 76.41220139999996,
+  "design_variables": [
+    0.012247410267553098,
+    0.5213766087556642,
+    3.399843461588565,
+    0.01124425856335463,
+    2.055470291120956,
+    0.9845171096673074,
+    0.32070958472261774,
+    3.399566980581434
+  ],
+  "best_mass": 479.61048039011706,
+  "max_displacement": 0.3499981681994906,
+  "max_stress": 6.249485436409357,
+  "final_feasible_fraction": 0.991304347826087
+}

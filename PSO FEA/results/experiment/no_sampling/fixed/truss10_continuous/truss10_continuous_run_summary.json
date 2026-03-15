@@ -1,0 +1,48 @@
+{
+  "problem_id": "truss10_continuous",
+  "label": "10-Bar Truss (Continuous)",
+  "coefficient_mode": "fixed",
+  "recommended_coefficients": {
+    "w": 0.54,
+    "c1": 1.292,
+    "c2": 1.708
+  },
+  "recommended_schedule": {
+    "phase_1_explore": {
+      "w": 0.5900000000000001,
+      "c1": 1.1923076923076925,
+      "c2": 1.807692307692308
+    },
+    "phase_2_refine": {
+      "w": 0.52,
+      "c1": 1.3923076923076927,
+      "c2": 1.6076923076923078
+    },
+    "switch_fraction_of_iters": 0.6
+  },
+  "swarm_size": 140,
+  "iters": 400,
+  "seed_optima_pct": 0.0,
+  "seeded_particles_requested_max": 0,
+  "seeded_particles_count": 0,
+  "seeded_particles": [],
+  "gbest_particle_name": "lhs_particle_119",
+  "seeded_particle_reached_gbest": false,
+  "pso_runtime_seconds": 24.2581063,
+  "design_variables": [
+    30.160276083881463,
+    0.10624433165310193,
+    23.54411102771966,
+    14.91283928794698,
+    0.10543174267588733,
+    0.5449705723044502,
+    7.552378431192091,
+    21.939355964572183,
+    20.891212251840884,
+    0.10481384319874149
+  ],
+  "best_mass": 5067.876551980354,
+  "max_displacement": 1.9999929979828386,
+  "max_stress": 24.836745265538514,
+  "final_feasible_fraction": 0.9357142857142857
+}

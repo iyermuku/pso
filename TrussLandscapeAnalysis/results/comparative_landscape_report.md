@@ -10,15 +10,15 @@ This report compares objective landscapes for all truss problems in the reposito
 
 ## Summary Table
 
-| Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Recommended (w,c1,c2) | Swarm Size | Iterations |
-|---|---|---:|---:|---:|---:|---:|---|---:|---:|
-| 10-Bar Truss (Continuous) | multimodal, narrow-basin | 4.460 | 0.752 | 30 | 0.098 | 0.0177 | (0.540, 1.292, 1.708) | 140 | 400 |
-| 10-Bar Truss (Discrete Sections) | multimodal | 13.038 | 0.736 | 29 | 0.084 | 0.1192 | (0.680, 1.210, 1.790) | 130 | 290 |
-| 72-Bar Truss (Continuous) | multimodal, smooth-macro, narrow-basin | 486.050 | 0.706 | 14 | 0.071 | 0.0431 | (0.600, 1.306, 1.694) | 150 | 320 |
-| 72-Bar Truss (Discrete Sections) | multimodal, smooth-macro, narrow-basin | 184.482 | 0.793 | 14 | 0.082 | 0.0367 | (0.570, 1.333, 1.667) | 150 | 320 |
-| 200-Bar Planar Truss (Continuous) | multimodal | 29.101 | 0.870 | 14 | 0.071 | 0.1192 | (0.680, 1.250, 1.750) | 150 | 290 |
-| 25-Bar Space Truss (Continuous) | multimodal, narrow-basin | 0.640 | 0.531 | 30 | 0.041 | 0.0812 | (0.570, 1.286, 1.714) | 115 | 430 |
-| 25-Bar Space Truss (Discrete Sections) | multimodal, narrow-basin | 1.454 | 0.408 | 30 | 0.093 | 0.0304 | (0.540, 1.313, 1.688) | 115 | 430 |
+| Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Time (s) | Recommended (w,c1,c2) | Swarm Size | Iterations |
+|---|---|---:|---:|---:|---:|---:|---:|---|---:|---:|
+| 10-Bar Truss (Continuous) | multimodal, narrow-basin | 4.460 | 0.752 | 30 | 0.098 | 0.0177 | 77.58 | (0.540, 1.292, 1.708) | 140 | 400 |
+| 10-Bar Truss (Discrete Sections) | multimodal | 13.038 | 0.736 | 29 | 0.084 | 0.1192 | 60.56 | (0.680, 1.210, 1.790) | 130 | 290 |
+| 72-Bar Truss (Continuous) | multimodal, smooth-macro, narrow-basin | 486.050 | 0.706 | 14 | 0.071 | 0.0431 | 766.98 | (0.600, 1.306, 1.694) | 150 | 320 |
+| 72-Bar Truss (Discrete Sections) | multimodal, smooth-macro, narrow-basin | 184.482 | 0.793 | 14 | 0.082 | 0.0367 | 764.04 | (0.570, 1.333, 1.667) | 150 | 320 |
+| 200-Bar Planar Truss (Continuous) | multimodal | 29.101 | 0.870 | 14 | 0.071 | 0.1192 | 1636.42 | (0.680, 1.250, 1.750) | 150 | 290 |
+| 25-Bar Space Truss (Continuous) | multimodal, narrow-basin | 0.640 | 0.531 | 30 | 0.041 | 0.0812 | 262.07 | (0.570, 1.286, 1.714) | 115 | 430 |
+| 25-Bar Space Truss (Discrete Sections) | multimodal, narrow-basin | 1.454 | 0.408 | 30 | 0.093 | 0.0304 | 357.51 | (0.540, 1.313, 1.688) | 115 | 430 |
 
 ## Per-Problem Interpretation and PSO Settings
 
