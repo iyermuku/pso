@@ -75,6 +75,9 @@ def run_fixed_coeff_pso(
     reflection_on_violation: bool = True,
     coeff_mode: str = "fixed",
     seed_optima_pct: float = 0.0,
+    coeff_w: float | None = None,
+    coeff_c1: float | None = None,
+    coeff_c2: float | None = None,
 ) -> Dict[str, object]:
     # Use landscape-recommended defaults when caller does not override.
     if swarm_size is None:
@@ -88,14 +91,19 @@ def run_fixed_coeff_pso(
     span = hi - lo
     v_max = v_frac * span
 
-    if coeff_mode not in {"fixed", "two-phase"}:
-        raise ValueError("coeff_mode must be one of: fixed, two-phase")
+    if coeff_mode not in {"fixed", "two-phase", "explicit"}:
+        raise ValueError("coeff_mode must be one of: fixed, two-phase, explicit")
+    if coeff_mode == "explicit":
+        if coeff_w is None or coeff_c1 is None or coeff_c2 is None:
+            raise ValueError("For coeff_mode='explicit', coeff_w, coeff_c1, and coeff_c2 are required")
     if seed_optima_pct < 0.0:
         raise ValueError("seed_optima_pct must be >= 0")
 
     def coeffs_for_iter(iter_idx: int) -> Tuple[float, float, float]:
         if coeff_mode == "fixed":
             return float(problem.recommended_w), float(problem.recommended_c1), float(problem.recommended_c2)
+        if coeff_mode == "explicit":
+            return float(coeff_w), float(coeff_c1), float(coeff_c2)
 
         schedule = problem.recommended_schedule
         switch_frac = float(schedule.get("switch_fraction_of_iters", 0.60))

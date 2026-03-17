@@ -29,7 +29,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--out-dir", type=str, default="PSO FEA/results")
-    parser.add_argument("--coeff-mode", type=str, default="fixed", choices=["fixed", "two-phase"])
+    parser.add_argument("--coeff-mode", type=str, default="fixed", choices=["fixed", "two-phase", "explicit"])
+    parser.add_argument("--w", type=float, default=None, help="Explicit inertia weight when --coeff-mode explicit")
+    parser.add_argument("--c1", type=float, default=None, help="Explicit cognitive coefficient when --coeff-mode explicit")
+    parser.add_argument("--c2", type=float, default=None, help="Explicit social coefficient when --coeff-mode explicit")
     parser.add_argument(
         "--seed-optima-pct",
         type=float,
@@ -99,6 +102,9 @@ def main() -> None:
         reflection_on_violation=True,
         coeff_mode=args.coeff_mode,
         seed_optima_pct=args.seed_optima_pct,
+        coeff_w=args.w,
+        coeff_c1=args.c1,
+        coeff_c2=args.c2,
     )
     pso_runtime_seconds = float(time.perf_counter() - t0)
 
