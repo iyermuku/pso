@@ -585,11 +585,5 @@
       "Swarm size 140: 10\u00d7dim=100 base +15 multimodal +15 narrow +10 LON, clipped to [30, 150].",
       "Iterations 400: 200 base +60 multimodal +90 narrow +50 LON, clipped to [150, 600]."
     ]
-  },
-  "analysis_threads": 4,
-  "cache_hits": 209993,
-  "cache_misses": 154539,
-  "cache_total_queries": 364532,
-  "cache_unique_evals": 150554,
-  "cache_hit_rate": 0.57606190951686
+  }
 }

@@ -397,9 +397,9 @@ def get_all_truss_problems() -> list[LandscapeProblem]:
     return [
         make_10bar_continuous(),
         make_10bar_discrete(),
+        make_25bar_continuous(),
+        make_25bar_discrete(),
         make_72bar_continuous_v2(),
         make_72bar_discrete(),
         make_200bar_continuous(),
-        make_25bar_continuous(),
-        make_25bar_discrete(),
     ]

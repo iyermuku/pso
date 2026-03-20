@@ -401,11 +401,5 @@
       "Swarm size 150: 10\u00d7dim=160 base +15 multimodal +10 narrow, clipped to [30, 150].",
       "Iterations 320: 200 base +60 multimodal +60 narrow, clipped to [150, 600]."
     ]
-  },
-  "analysis_threads": 4,
-  "cache_hits": 22094,
-  "cache_misses": 130262,
-  "cache_total_queries": 152356,
-  "cache_unique_evals": 130259,
-  "cache_hit_rate": 0.14501562130798917
+  }
 }

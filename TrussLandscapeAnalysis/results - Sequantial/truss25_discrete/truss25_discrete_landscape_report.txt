@@ -1,0 +1,30 @@
+25-Bar Space Truss (Discrete Sections) Landscape Report
+=======================================================
+
+Classification: multimodal, narrow-basin
+Autocorrelation length: 1.454
+Information content H(eps=0.05): 0.408
+LON nodes: 30
+LON edge density: 0.093
+Basin width median (norm): 0.0304
+
+Recommended PSO coefficients:
+w=0.540, c1=1.313, c2=1.688
+Recommended swarm size: 115
+Recommended iterations: 430
+Detected local optima (LON centers): 30
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+- Many weakly connected attractors: increase social attraction to reduce swarm fragmentation.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- Very narrow basin estimate: damp momentum and increase pbest guidance.
+- Swarm size 115: 10×dim=80 base +10 multimodal +15 narrow +10 LON, clipped to [30, 150].
+- Iterations 430: 200 base +40 multimodal +90 narrow +50 LON +50 ruggedness, clipped to [150, 600].
+
+Generated plots:
+- truss25_discrete_autocorr.png
+- truss25_discrete_information_content.png
+- truss25_discrete_basins_map.png
+- truss25_discrete_lon_basins.png

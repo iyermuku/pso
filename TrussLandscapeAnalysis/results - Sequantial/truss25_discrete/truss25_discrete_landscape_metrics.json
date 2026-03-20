@@ -522,11 +522,5 @@
       "Swarm size 115: 10\u00d7dim=80 base +10 multimodal +15 narrow +10 LON, clipped to [30, 150].",
       "Iterations 430: 200 base +40 multimodal +90 narrow +50 LON +50 ruggedness, clipped to [150, 600]."
     ]
-  },
-  "analysis_threads": 4,
-  "cache_hits": 69118,
-  "cache_misses": 211504,
-  "cache_total_queries": 280622,
-  "cache_unique_evals": 211504,
-  "cache_hit_rate": 0.24630285579890387
+  }
 }

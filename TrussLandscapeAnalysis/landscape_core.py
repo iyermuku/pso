@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import concurrent.futures as cf
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -108,9 +111,9 @@ def information_content(series: np.ndarray, eps_values: np.ndarray) -> Dict[str,
         sym[dn > eps] = 1
         sym[dn < -eps] = -1
 
-        pairs = np.stack([sym[:-1], sym[1:]], axis=1)
-        bins = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
-        counts = np.array([np.sum((pairs[:, 0] == a) & (pairs[:, 1] == b)) for a, b in bins], dtype=float)
+        # Encode transition pairs (a,b) in {-1,0,1}^2 to bins 0..8 for fast counting.
+        pair_codes = (sym[:-1] + 1) * 3 + (sym[1:] + 1)
+        counts = np.bincount(pair_codes, minlength=9).astype(float)
         p = counts / max(np.sum(counts), 1.0)
         nz = p > 0
         h = -np.sum(p[nz] * np.log2(p[nz]))
@@ -203,17 +206,29 @@ def lon_structure(
     rng: np.random.Generator,
     n_starts: int = 36,
     n_perturb: int = 5,
+    n_threads: int = 1,
 ) -> Dict:
     """Build a local-optima-network approximation and basin statistics."""
     s01 = _lhs(n_starts, len(problem.lo), rng)
     starts = problem.lo + s01 * (problem.hi - problem.lo)
 
-    minima = []
-    vals = []
-    for i in range(n_starts):
+    minima: list[np.ndarray] = [None] * n_starts  # type: ignore[assignment]
+    vals: list[float] = [0.0] * n_starts
+
+    def _descent_start(i: int) -> tuple[int, np.ndarray, float]:
         x_min, f_min = local_descent(problem, starts[i], max_iters=35)
-        minima.append(x_min)
-        vals.append(f_min)
+        return i, x_min, f_min
+
+    if n_threads > 1 and n_starts > 1:
+        with cf.ThreadPoolExecutor(max_workers=n_threads) as pool:
+            for i, x_min, f_min in pool.map(_descent_start, range(n_starts)):
+                minima[i] = x_min
+                vals[i] = f_min
+    else:
+        for i in range(n_starts):
+            _, x_min, f_min = _descent_start(i)
+            minima[i] = x_min
+            vals[i] = f_min
 
     centers, center_vals, labels = cluster_minima(minima, vals, problem.lo, problem.hi)
     n_nodes = centers.shape[0]
@@ -225,16 +240,32 @@ def lon_structure(
     edges = np.zeros((n_nodes, n_nodes), dtype=int)
     span = problem.hi - problem.lo
 
+    inv_span = 1.0 / (problem.hi - problem.lo)
+
+    x0_items: list[tuple[int, np.ndarray]] = []
     for i in range(n_nodes):
         for _ in range(n_perturb):
             x0 = centers[i] + rng.normal(0.0, 0.06 * span)
             x0 = np.clip(x0, problem.lo, problem.hi)
-            x1, f1 = local_descent(problem, x0, max_iters=28)
-            d_best = [
-                _normalized_distance(x1, centers[j], problem.lo, problem.hi) + 5.0 * abs(f1 - center_vals[j])
-                for j in range(n_nodes)
-            ]
-            j = int(np.argmin(d_best))
+            x0_items.append((i, x0))
+
+    center_vals_arr = np.asarray(center_vals, dtype=float)
+
+    def _descent_edge(item: tuple[int, np.ndarray]) -> tuple[int, int]:
+        i, x0 = item
+        x1, f1 = local_descent(problem, x0, max_iters=28)
+        z = (centers - x1) * inv_span
+        d_best = np.linalg.norm(z, axis=1) + 5.0 * np.abs(center_vals_arr - f1)
+        j = int(np.argmin(d_best))
+        return i, j
+
+    if n_threads > 1 and len(x0_items) > 1:
+        with cf.ThreadPoolExecutor(max_workers=n_threads) as pool:
+            for i, j in pool.map(_descent_edge, x0_items):
+                edges[i, j] += 1
+    else:
+        for item in x0_items:
+            i, j = _descent_edge(item)
             edges[i, j] += 1
 
     edge_presence = (edges > 0).astype(int)
@@ -278,6 +309,7 @@ def basin_map_2d(
     dim_i: int,
     dim_j: int,
     n_grid: int = 26,
+    n_threads: int = 1,
 ) -> Dict:
     """Map attractor IDs on a 2D slice spanned by two sensitive dimensions."""
     ai = np.linspace(problem.lo[dim_i], problem.hi[dim_i], n_grid)
@@ -285,19 +317,31 @@ def basin_map_2d(
     ids = np.zeros((n_grid, n_grid), dtype=int)
 
     centers = lon["centers"]
-    cvals = lon["center_vals"]
+    cvals = np.asarray(lon["center_vals"], dtype=float)
+    inv_span = 1.0 / (problem.hi - problem.lo)
 
-    for r, vi in enumerate(ai):
-        for c, vj in enumerate(aj):
-            x0 = x_anchor.copy()
-            x0[dim_i] = vi
-            x0[dim_j] = vj
-            xm, fm = local_descent(problem, x0, max_iters=24)
-            score = [
-                _normalized_distance(xm, centers[k], problem.lo, problem.hi) + 5.0 * abs(fm - cvals[k])
-                for k in range(len(cvals))
-            ]
-            ids[r, c] = int(np.argmin(score))
+    rc_pairs = [(r, c) for r in range(n_grid) for c in range(n_grid)]
+
+    def _basin_cell(rc: tuple[int, int]) -> tuple[int, int, int]:
+        r, c = rc
+        vi = ai[r]
+        vj = aj[c]
+        x0 = x_anchor.copy()
+        x0[dim_i] = vi
+        x0[dim_j] = vj
+        xm, fm = local_descent(problem, x0, max_iters=24)
+        z = (centers - xm) * inv_span
+        score = np.linalg.norm(z, axis=1) + 5.0 * np.abs(cvals - fm)
+        return r, c, int(np.argmin(score))
+
+    if n_threads > 1 and len(rc_pairs) > 1:
+        with cf.ThreadPoolExecutor(max_workers=n_threads) as pool:
+            for r, c, val in pool.map(_basin_cell, rc_pairs):
+                ids[r, c] = val
+    else:
+        for rc in rc_pairs:
+            r, c, val = _basin_cell(rc)
+            ids[r, c] = val
 
     return {"grid_i": ai, "grid_j": aj, "ids": ids}
 
@@ -332,11 +376,12 @@ def narrow_basin_metrics(
     """Estimate basin narrowness by radial distance to a target objective rise."""
     span = problem.hi - problem.lo
     widths = []
+    alpha_grid = np.linspace(0.005, 0.5, 40)
     for _ in range(n_dirs):
         d = rng.normal(0.0, 1.0, size=len(span))
         d = d / max(np.linalg.norm(d), 1e-12)
         hit = 0.5
-        for alpha in np.linspace(0.005, 0.5, 40):
+        for alpha in alpha_grid:
             cand = _clip_reflect(x_best + alpha * span * d, problem.lo, problem.hi)
             f_c, _, _ = problem.evaluate(cand)
             if f_c - f_best >= rise_abs:
@@ -586,11 +631,33 @@ def analyze_problem(
     lon_starts: int = 30,
     lon_perturb: int = 4,
     basin_grid: int = 24,
+    n_threads: int = 1,
 ) -> Dict[str, object]:
     """Run full landscape analysis, save outputs, and return computed metrics."""
     out_dir.mkdir(parents=True, exist_ok=True)
     if problem.calibrate is not None:
         problem.calibrate(n_ref, seed)
+
+    cache: Dict[bytes, Tuple[float, float, float]] = {}
+    cache_hits = 0
+    cache_misses = 0
+    base_evaluate = problem.evaluate
+
+    def _evaluate_cached(x: np.ndarray) -> Tuple[float, float, float]:
+        # Byte-keyed memoization preserves exact values while avoiding repeated FE evaluations.
+        nonlocal cache_hits, cache_misses
+        x_arr = np.ascontiguousarray(np.asarray(x, dtype=float))
+        key = x_arr.tobytes()
+        val = cache.get(key)
+        if val is None:
+            cache_misses += 1
+            val = base_evaluate(x_arr)
+            cache[key] = val
+        else:
+            cache_hits += 1
+        return val
+
+    problem = replace(problem, evaluate=_evaluate_cached)
 
     rng = np.random.default_rng(seed)
 
@@ -605,13 +672,21 @@ def analyze_problem(
     h05 = float(info["H"][eps_idx])
     m05 = float(info["M"][eps_idx])
 
-    lon = lon_structure(problem, rng, n_starts=lon_starts, n_perturb=lon_perturb)
+    lon = lon_structure(problem, rng, n_starts=lon_starts, n_perturb=lon_perturb, n_threads=n_threads)
     best_idx = int(np.argmin(lon["center_vals"]))
     x_best = lon["centers"][best_idx].copy()
     f_best = float(lon["center_vals"][best_idx])
 
     dim_i, dim_j, grad_mag = sensitivity_dims(problem, x_best)
-    basin_map = basin_map_2d(problem, lon, x_anchor=x_best, dim_i=dim_i, dim_j=dim_j, n_grid=basin_grid)
+    basin_map = basin_map_2d(
+        problem,
+        lon,
+        x_anchor=x_best,
+        dim_i=dim_i,
+        dim_j=dim_j,
+        n_grid=basin_grid,
+        n_threads=n_threads,
+    )
 
     smooth = smoothness_metrics(problem, rng)
     narrow = narrow_basin_metrics(problem, rng, x_best=x_best, f_best=f_best, n_dirs=28, rise_abs=100.0)
@@ -676,6 +751,12 @@ def analyze_problem(
         "classification_narrow_score": int(classes["narrow_score"]),
         "detected_optima": detected_optima,
         "pso_recommendation": recommendation,
+        "analysis_threads": int(n_threads),
+        "cache_hits": int(cache_hits),
+        "cache_misses": int(cache_misses),
+        "cache_total_queries": int(cache_hits + cache_misses),
+        "cache_unique_evals": int(len(cache)),
+        "cache_hit_rate": float(cache_hits / max(cache_hits + cache_misses, 1)),
     }
 
     prefix = problem.problem_id

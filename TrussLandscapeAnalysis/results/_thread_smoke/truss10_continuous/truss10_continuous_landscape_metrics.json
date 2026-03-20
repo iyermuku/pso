@@ -1,0 +1,186 @@
+{
+  "problem_id": "truss10_continuous",
+  "label": "10-Bar Truss (Continuous)",
+  "seed": 2026,
+  "autocorrelation_length": 1.326980482670613,
+  "information_content_H_eps005": 0.9908819978510721,
+  "information_content_M_eps005": 0.6216216216216216,
+  "lon_nodes": 6,
+  "lon_edge_density": 0.23333333333333334,
+  "lon_basin_entropy": 2.584962500721156,
+  "best_local_objective": 3069.8476569422755,
+  "best_local_design": [
+    11.38798257745222,
+    0.1,
+    8.717320976482249,
+    5.095442445073205,
+    0.6825143277213651,
+    0.1,
+    5.205929255243156,
+    7.8262295107767175,
+    7.201931988284648,
+    0.23153749812301405
+  ],
+  "top_sensitivity_dims": [
+    6,
+    4
+  ],
+  "top_sensitivity_magnitude": [
+    856.7310536041313,
+    527.0208301485204
+  ],
+  "slope_median": 2128.4282489641187,
+  "slope_q90": 66974.24601137414,
+  "slope_std": 116183.22513554421,
+  "basin_width_mean_norm": 0.030837912087912086,
+  "basin_width_median_norm": 0.01769230769230769,
+  "basin_width_q10_norm": 0.005,
+  "rise_abs": 100.0,
+  "classification_labels": "multimodal, narrow-basin",
+  "classification_summary": "Landscape class: multimodal, narrow-basin | multimodal_score=3, smooth_score=0, narrow_score=3",
+  "classification_multimodal_score": 3,
+  "classification_smooth_score": 0,
+  "classification_narrow_score": 3,
+  "detected_optima": [
+    {
+      "rank": 1,
+      "objective": 3069.8476569422755,
+      "design_variables": [
+        11.38798257745222,
+        0.1,
+        8.717320976482249,
+        5.095442445073205,
+        0.6825143277213651,
+        0.1,
+        5.205929255243156,
+        7.8262295107767175,
+        7.201931988284648,
+        0.23153749812301405
+      ],
+      "basin_size": 1
+    },
+    {
+      "rank": 2,
+      "objective": 3105.891813089268,
+      "design_variables": [
+        10.154394723104302,
+        1.4232929192607853,
+        10.093345829405331,
+        4.759437581863567,
+        0.1,
+        0.6488201722647946,
+        6.8040608629107995,
+        6.002608156089134,
+        5.742446478163976,
+        1.94454075477909
+      ],
+      "basin_size": 1
+    },
+    {
+      "rank": 3,
+      "objective": 3445.9559995085106,
+      "design_variables": [
+        6.181793494791857,
+        6.235324895921351,
+        16.32579680600444,
+        2.148073135773014,
+        0.1,
+        4.057987744722294,
+        11.133393944579932,
+        2.0958337799283813,
+        2.37222034820031,
+        4.500873393300085
+      ],
+      "basin_size": 1
+    },
+    {
+      "rank": 4,
+      "objective": 3445.9623413624427,
+      "design_variables": [
+        17.108729450479704,
+        3.640287332703961,
+        14.743724352854223,
+        8.29449322521673,
+        0.1,
+        0.5756139063395782,
+        7.243196443459809,
+        7.480646587383581,
+        8.90801728009328,
+        0.9432483009070918
+      ],
+      "basin_size": 1
+    },
+    {
+      "rank": 5,
+      "objective": 3559.8985233745598,
+      "design_variables": [
+        10.05068676880388,
+        0.36488537545051347,
+        12.153928063988413,
+        5.981390284366721,
+        9.77526103881631,
+        0.1,
+        12.274262919839565,
+        2.5531615235646132,
+        8.639503786459244,
+        0.1
+      ],
+      "basin_size": 1
+    },
+    {
+      "rank": 6,
+      "objective": 3562.5524183143843,
+      "design_variables": [
+        24.829720195917528,
+        0.1,
+        5.708377181383686,
+        4.546866230221748,
+        3.954916268708703,
+        0.1,
+        0.1,
+        18.316901126341417,
+        7.214053708828968,
+        0.49448210232167433
+      ],
+      "basin_size": 1
+    }
+  ],
+  "pso_recommendation": {
+    "recommended": {
+      "w": 0.54,
+      "c1": 1.333,
+      "c2": 1.667
+    },
+    "recommended_sum_c1_c2": 3.0,
+    "recommended_swarm_size": 130,
+    "recommended_iters": 400,
+    "schedule": {
+      "phase_1_explore": {
+        "w": 0.5900000000000001,
+        "c1": 1.2333333333333334,
+        "c2": 1.7666666666666666
+      },
+      "phase_2_refine": {
+        "w": 0.52,
+        "c1": 1.4333333333333336,
+        "c2": 1.5666666666666664
+      },
+      "switch_fraction_of_iters": 0.6
+    },
+    "rationale": [
+      "Multimodality: raise social pull for swarm consensus across local basins.",
+      "Narrow basin: reduce inertia and retain cognitive pull for local refinement.",
+      "Short autocorrelation length: lower inertia to avoid overshoot.",
+      "High information content: increase exploitation pressure after discovery.",
+      "Very narrow basin estimate: damp momentum and increase pbest guidance.",
+      "Swarm size 130: 10\u00d7dim=100 base +15 multimodal +15 narrow, clipped to [30, 150].",
+      "Iterations 400: 200 base +60 multimodal +90 narrow +50 ruggedness, clipped to [150, 600]."
+    ]
+  },
+  "analysis_threads": 4,
+  "cache_hits": 9940,
+  "cache_misses": 25331,
+  "cache_total_queries": 35271,
+  "cache_unique_evals": 24774,
+  "cache_hit_rate": 0.28181792407360157
+}

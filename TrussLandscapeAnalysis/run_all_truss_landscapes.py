@@ -1,15 +1,22 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures as cf
 import json
+import os
 import time
 from pathlib import Path
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
 from landscape_core import analyze_problem
 from problem_adapters import get_all_truss_problems
+
+
+_WORKER_PROBLEMS: dict[str, object] | None = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -20,6 +27,21 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--walk-steps", type=int, default=360)
     p.add_argument("--lon-starts", type=int, default=30)
     p.add_argument("--basin-grid", type=int, default=24)
+    p.add_argument(
+        "--jobs",
+        type=int,
+        default=1,
+        help="Number of worker processes (1 = sequential, 0 = auto cpu count).",
+    )
+    p.add_argument(
+        "--threads-per-problem",
+        type=int,
+        default=0,
+        help=(
+            "Number of threads used within each problem landscape analysis "
+            "(0 = auto from CPU cores and --jobs)."
+        ),
+    )
     p.add_argument(
         "--problems",
         type=str,
@@ -85,17 +107,20 @@ def _write_comparative_report(out_dir: Path, metrics: list[dict]) -> None:
     lines.append("")
     lines.append("## Summary Table")
     lines.append("")
-    lines.append("| Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Time (s) | Recommended (w,c1,c2) | Swarm Size | Iterations |")
-    lines.append("|---|---|---:|---:|---:|---:|---:|---:|---|---:|---:|")
+    lines.append("| Problem | Class | AC Length | H(eps=0.05) | LON Nodes | LON Density | Basin Width Median | Time (s) | Cache Hit % | Unique Evals | Recommended (w,c1,c2) | Swarm Size | Iterations |")
+    lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|")
     for m in metrics:
         rec = m["pso_recommendation"]["recommended"]
         sw = m["pso_recommendation"].get("recommended_swarm_size", "—")
         ni = m["pso_recommendation"].get("recommended_iters", "—")
         t_sec = float(m.get("analysis_runtime_seconds", 0.0))
+        cache_hit_pct = 100.0 * float(m.get("cache_hit_rate", 0.0))
+        unique_evals = int(m.get("cache_unique_evals", 0))
         lines.append(
             f"| {m['label']} | {m['classification_labels']} | {m['autocorrelation_length']:.3f} | "
             f"{m['information_content_H_eps005']:.3f} | {m['lon_nodes']} | {m['lon_edge_density']:.3f} | "
-            f"{m['basin_width_median_norm']:.4f} | {t_sec:.2f} | ({rec['w']:.3f}, {rec['c1']:.3f}, {rec['c2']:.3f}) | {sw} | {ni} |"
+            f"{m['basin_width_median_norm']:.4f} | {t_sec:.2f} | {cache_hit_pct:.1f} | {unique_evals} | "
+            f"({rec['w']:.3f}, {rec['c1']:.3f}, {rec['c2']:.3f}) | {sw} | {ni} |"
         )
     lines.append("")
 
@@ -128,6 +153,7 @@ def _write_comparative_report(out_dir: Path, metrics: list[dict]) -> None:
     lines.append("- Problems with higher LON node counts and higher information content are more multimodal/rugged.")
     lines.append("- Problems with smaller normalized basin width benefit from lower inertia and stronger local refinement.")
     lines.append("- Suggested default when uncertain: w=0.62, c1=1.35, c2=1.65; then adapt per problem diagnostics.")
+    lines.append("- Higher cache-hit % indicates more repeated landscape probes and stronger memoization payoff.")
     lines.append("")
     lines.append("## Outputs")
     lines.append("- Per-problem reports and metrics are in `results/<problem_id>/`.")
@@ -151,48 +177,135 @@ def main() -> None:
             raise ValueError("No matching problems for --problems filter.")
     all_metrics: list[dict] = []
 
-    for problem in problems:
-        p_out = out_dir / problem.problem_id
-        if len(problem.lo) >= 16:
-            walk_steps = min(args.walk_steps, 220)
-            lon_starts = min(args.lon_starts, 14)
-            lon_perturb = 2
-            basin_grid = min(args.basin_grid, 12)
-        else:
-            walk_steps = args.walk_steps
-            lon_starts = args.lon_starts
-            lon_perturb = 4
-            basin_grid = args.basin_grid
+    jobs = int(args.jobs)
+    if jobs == 0:
+        jobs = max(os.cpu_count() or 1, 1)
+    if jobs < 1:
+        raise ValueError("--jobs must be >= 0")
 
-        t0 = time.perf_counter()
-        metrics = analyze_problem(
-            problem=problem,
-            out_dir=p_out,
-            seed=args.seed,
-            n_ref=args.n_ref,
-            walk_steps=walk_steps,
-            walk_step_frac=0.03,
-            lon_starts=lon_starts,
-            lon_perturb=lon_perturb,
-            basin_grid=basin_grid,
-        )
-        elapsed_s = float(time.perf_counter() - t0)
-        metrics["analysis_runtime_seconds"] = elapsed_s
-        all_metrics.append(metrics)
-        print(
-            f"{problem.problem_id}: {metrics['classification_labels']} | "
-            f"rec=({metrics['pso_recommendation']['recommended']['w']:.3f},"
-            f"{metrics['pso_recommendation']['recommended']['c1']:.3f},"
-            f"{metrics['pso_recommendation']['recommended']['c2']:.3f}) | "
-            f"time={elapsed_s:.2f}s"
-        )
+    threads_per_problem = _resolve_threads_per_problem(args.threads_per_problem, jobs)
+
+    tasks = []
+    problem_order = [p.problem_id for p in problems]
+    for problem in problems:
+        task = _build_task_for_problem(problem, args, out_dir, threads_per_problem=threads_per_problem)
+        tasks.append(task)
+
+    t_all_start = time.perf_counter()
+    if jobs == 1 or len(tasks) <= 1:
+        for task in tasks:
+            metrics = _run_problem_task(task)
+            all_metrics.append(metrics)
+            _print_problem_summary(metrics)
+    else:
+        with cf.ProcessPoolExecutor(max_workers=jobs) as pool:
+            futures = [pool.submit(_run_problem_task, task) for task in tasks]
+            for fut in cf.as_completed(futures):
+                metrics = fut.result()
+                all_metrics.append(metrics)
+                _print_problem_summary(metrics)
+
+    order = {pid: i for i, pid in enumerate(problem_order)}
+    all_metrics.sort(key=lambda m: order[m["problem_id"]])
+    total_elapsed = float(time.perf_counter() - t_all_start)
 
     (out_dir / "all_landscape_metrics.json").write_text(json.dumps(all_metrics, indent=2), encoding="utf-8")
     _comparative_plots(out_dir, all_metrics)
     _write_comparative_report(out_dir, all_metrics)
 
+    if all_metrics:
+        hit_rate = np.mean([float(m.get("cache_hit_rate", 0.0)) for m in all_metrics]) * 100.0
+        unique = int(np.sum([int(m.get("cache_unique_evals", 0)) for m in all_metrics]))
+        total_q = int(np.sum([int(m.get("cache_total_queries", 0)) for m in all_metrics]))
+        print(
+            f"Cache summary: avg_hit_rate={hit_rate:.1f}% | total_unique_evals={unique} | total_queries={total_q}"
+        )
+    print(f"Total wall time: {total_elapsed:.2f}s (jobs={jobs})")
+    print(f"Threading config: threads_per_problem={threads_per_problem}")
     print("Comparative landscape analysis complete")
     print(f"Outputs written to: {out_dir.resolve()}")
+
+
+def _resolve_threads_per_problem(requested_threads: int, jobs: int) -> int:
+    if requested_threads < 0:
+        raise ValueError("--threads-per-problem must be >= 0")
+    if requested_threads > 0:
+        return requested_threads
+
+    cpu = max(os.cpu_count() or 1, 1)
+    # Auto mode allocates available cores across concurrent problems.
+    return max(cpu // max(jobs, 1), 1)
+
+
+def _build_task_for_problem(
+    problem,
+    args: argparse.Namespace,
+    out_dir: Path,
+    threads_per_problem: int,
+) -> dict:
+    if len(problem.lo) >= 16:
+        walk_steps = min(args.walk_steps, 220)
+        lon_starts = min(args.lon_starts, 14)
+        lon_perturb = 2
+        basin_grid = min(args.basin_grid, 12)
+    else:
+        walk_steps = args.walk_steps
+        lon_starts = args.lon_starts
+        lon_perturb = 4
+        basin_grid = args.basin_grid
+
+    return {
+        "problem_id": problem.problem_id,
+        "out_dir": str((out_dir / problem.problem_id)),
+        "seed": int(args.seed),
+        "n_ref": int(args.n_ref),
+        "walk_steps": int(walk_steps),
+        "lon_starts": int(lon_starts),
+        "lon_perturb": int(lon_perturb),
+        "basin_grid": int(basin_grid),
+        "threads_per_problem": int(threads_per_problem),
+    }
+
+
+def _get_worker_problems() -> dict[str, object]:
+    global _WORKER_PROBLEMS
+    if _WORKER_PROBLEMS is None:
+        _WORKER_PROBLEMS = {p.problem_id: p for p in get_all_truss_problems()}
+    return _WORKER_PROBLEMS
+
+
+def _run_problem_task(task: dict) -> dict:
+    problems = _get_worker_problems()
+    problem_id = task["problem_id"]
+    if problem_id not in problems:
+        raise ValueError(f"Unknown problem id: {problem_id}")
+
+    t0 = time.perf_counter()
+    metrics = analyze_problem(
+        problem=problems[problem_id],
+        out_dir=Path(task["out_dir"]),
+        seed=int(task["seed"]),
+        n_ref=int(task["n_ref"]),
+        walk_steps=int(task["walk_steps"]),
+        walk_step_frac=0.03,
+        lon_starts=int(task["lon_starts"]),
+        lon_perturb=int(task["lon_perturb"]),
+        basin_grid=int(task["basin_grid"]),
+        n_threads=max(int(task.get("threads_per_problem", 1)), 1),
+    )
+    metrics["analysis_runtime_seconds"] = float(time.perf_counter() - t0)
+    return metrics
+
+
+def _print_problem_summary(metrics: dict) -> None:
+    rec = metrics["pso_recommendation"]["recommended"]
+    print(
+        f"{metrics['problem_id']}: {metrics['classification_labels']} | "
+        f"rec=({rec['w']:.3f},{rec['c1']:.3f},{rec['c2']:.3f}) | "
+        f"time={float(metrics.get('analysis_runtime_seconds', 0.0)):.2f}s | "
+        f"cache_hit={100.0 * float(metrics.get('cache_hit_rate', 0.0)):.1f}% | "
+        f"threads={int(metrics.get('analysis_threads', 1))}"
+    )
 
 
 if __name__ == "__main__":

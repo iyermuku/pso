@@ -566,10 +566,10 @@
       "Iterations 290: 200 base +60 multimodal +30 narrow, clipped to [150, 600]."
     ]
   },
-  "analysis_threads": 4,
-  "cache_hits": 18437,
-  "cache_misses": 216515,
+  "analysis_threads": 2,
+  "cache_hits": 18436,
+  "cache_misses": 216516,
   "cache_total_queries": 234952,
   "cache_unique_evals": 216515,
-  "cache_hit_rate": 0.07847134733903095
+  "cache_hit_rate": 0.07846709115053288
 }

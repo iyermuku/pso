@@ -74,6 +74,20 @@ Saved per problem in `<id>_landscape_metrics.json`:
 - `basin_width_mean_norm`, `basin_width_median_norm`, `basin_width_q10_norm`
 - `classification_*`
 - `pso_recommendation`
+- `analysis_threads`
+- `cache_hits`, `cache_misses`, `cache_total_queries`, `cache_unique_evals`, `cache_hit_rate`
+
+### Performance instrumentation (new)
+
+The analyzer now includes deterministic memoization of objective evaluations and
+reports cache utilization for each problem. This helps quantify repeated probes
+from local descent, LON perturbation, and basin-map computations.
+
+Interpretation:
+
+- higher `cache_hit_rate` means stronger reuse and lower repeated FE solves
+- `cache_unique_evals` approximates effective expensive evaluations actually computed
+- `cache_total_queries` tracks total evaluator calls after all algorithm stages
 
 ## Score system and classification mapping
 
@@ -206,6 +220,38 @@ Important options:
 - `--walk-steps`
 - `--lon-starts`
 - `--basin-grid`
+- `--jobs` process count across problems (`1` = sequential, `0` = auto CPU count)
+- `--threads-per-problem` thread count within each problem analysis (`0` = auto, default)
+
+## Parallel execution and tuning
+
+Two levels of parallelism are available:
+
+- process-level: run different problems concurrently (`--jobs`)
+- thread-level: run parts of a single problem analysis concurrently (`--threads-per-problem`)
+
+Examples:
+
+```bash
+# Process parallelism only
+python TrussLandscapeAnalysis/run_all_truss_landscapes.py --jobs 0
+
+# Intra-problem threading only (explicit)
+python TrussLandscapeAnalysis/run_all_truss_landscapes.py --jobs 1 --threads-per-problem 4
+
+# Default behavior (auto threads per problem)
+python TrussLandscapeAnalysis/run_all_truss_landscapes.py --jobs 1
+
+# Hybrid (use with care to avoid oversubscription)
+python TrussLandscapeAnalysis/run_all_truss_landscapes.py --jobs 2 --threads-per-problem 2
+```
+
+Practical tuning rule:
+
+- keep roughly `jobs * threads_per_problem <= physical_cores`
+- in auto mode (`--threads-per-problem 0`), thread count is `max(cpu_count // jobs, 1)`
+- if FE solve dominates and releases GIL well, increasing `threads-per-problem` can help
+- otherwise prefer higher `jobs` and lower `threads-per-problem`
 
 ## Outputs
 
@@ -224,6 +270,8 @@ Comparative files in `TrussLandscapeAnalysis/results/`:
 - `comparative_landscape_report.md`
 - `comparison_landscape_scores.png`
 - `comparison_ruggedness_lon.png`
+
+The comparative markdown report now also includes cache columns (`Cache Hit %`, `Unique Evals`).
 
 ## Using recommendations in PSO runs
 

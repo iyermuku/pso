@@ -1,0 +1,29 @@
+10-Bar Truss (Continuous) Landscape Report
+==========================================
+
+Classification: multimodal, narrow-basin
+Autocorrelation length: 4.655
+Information content H(eps=0.05): 0.858
+LON nodes: 5
+LON edge density: 0.200
+Basin width median (norm): 0.0431
+
+Recommended PSO coefficients:
+w=0.570, c1=1.306, c2=1.694
+Recommended swarm size: 130
+Recommended iterations: 350
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 130: 10×dim=100 base +15 multimodal +15 narrow, clipped to [30, 150].
+- Iterations 350: 200 base +60 multimodal +90 narrow, clipped to [150, 600].
+
+Generated plots:
+- truss10_continuous_autocorr.png
+- truss10_continuous_information_content.png
+- truss10_continuous_basins_map.png
+- truss10_continuous_lon_basins.png

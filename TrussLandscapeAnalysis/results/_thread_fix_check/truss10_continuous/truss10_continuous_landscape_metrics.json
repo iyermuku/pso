@@ -586,10 +586,10 @@
       "Iterations 400: 200 base +60 multimodal +90 narrow +50 LON, clipped to [150, 600]."
     ]
   },
-  "analysis_threads": 4,
-  "cache_hits": 209993,
-  "cache_misses": 154539,
+  "analysis_threads": 2,
+  "cache_hits": 213870,
+  "cache_misses": 150662,
   "cache_total_queries": 364532,
   "cache_unique_evals": 150554,
-  "cache_hit_rate": 0.57606190951686
+  "cache_hit_rate": 0.5866974641458089
 }

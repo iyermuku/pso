@@ -1,0 +1,216 @@
+[
+  {
+    "problem_id": "truss10_continuous",
+    "label": "10-Bar Truss (Continuous)",
+    "seed": 2026,
+    "autocorrelation_length": 1.3456244787575058,
+    "information_content_H_eps005": 0.9846115355512822,
+    "information_content_M_eps005": 0.5555555555555556,
+    "lon_nodes": 8,
+    "lon_edge_density": 0.23214285714285715,
+    "lon_basin_entropy": 3.0,
+    "best_local_objective": 2911.6693096538447,
+    "best_local_design": [
+      8.483640690291995,
+      0.1,
+      10.132124586566611,
+      5.646429003960622,
+      0.1,
+      0.1,
+      7.108869684271435,
+      8.388859475026873,
+      7.8958489037031425,
+      1.003956654547304
+    ],
+    "top_sensitivity_dims": [
+      1,
+      5
+    ],
+    "top_sensitivity_magnitude": [
+      471.5026878552544,
+      92.23328472116242
+    ],
+    "slope_median": 2218.9612722422726,
+    "slope_q90": 61819.47322047184,
+    "slope_std": 75212.46902195686,
+    "basin_width_mean_norm": 0.06891483516483517,
+    "basin_width_median_norm": 0.06846153846153846,
+    "basin_width_q10_norm": 0.043076923076923075,
+    "rise_abs": 100.0,
+    "classification_labels": "multimodal, narrow-basin",
+    "classification_summary": "Landscape class: multimodal, narrow-basin | multimodal_score=3, smooth_score=0, narrow_score=2",
+    "classification_multimodal_score": 3,
+    "classification_smooth_score": 0,
+    "classification_narrow_score": 2,
+    "detected_optima": [
+      {
+        "rank": 1,
+        "objective": 2911.6693096538447,
+        "design_variables": [
+          8.483640690291995,
+          0.1,
+          10.132124586566611,
+          5.646429003960622,
+          0.1,
+          0.1,
+          7.108869684271435,
+          8.388859475026873,
+          7.8958489037031425,
+          1.003956654547304
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 2,
+        "objective": 2923.6789300302944,
+        "design_variables": [
+          10.054834880991724,
+          1.271683336834938,
+          8.103503724355116,
+          3.8859236086363143,
+          1.614813886753531,
+          0.5356864689838697,
+          5.133841487666529,
+          8.355078735698157,
+          5.243661731811471,
+          1.734078476334213
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 3,
+        "objective": 3045.0601468026825,
+        "design_variables": [
+          12.377413022838198,
+          0.9984730333705738,
+          8.16321063921051,
+          3.867311110385079,
+          2.8857870783866524,
+          1.5152107991790618,
+          4.566908741314366,
+          8.26843396419461,
+          5.040226211145954,
+          1.8929361941954503
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 4,
+        "objective": 3107.2945575120157,
+        "design_variables": [
+          6.56610125937689,
+          1.9776700143103412,
+          12.484462911160772,
+          4.637776372870091,
+          3.2193065409925676,
+          1.125382893657049,
+          11.010514551001705,
+          3.0192569720567537,
+          5.709042742940638,
+          2.3511109439926448
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 5,
+        "objective": 3111.1695470820405,
+        "design_variables": [
+          11.217857711582138,
+          2.225890388172543,
+          8.22500104390534,
+          4.85351799412873,
+          2.937509376970125,
+          2.376569749582279,
+          4.559081043295751,
+          9.039968225260873,
+          5.224109065714218,
+          1.7959316858013015
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 6,
+        "objective": 3154.057974305687,
+        "design_variables": [
+          13.847782960609543,
+          0.1,
+          8.09828414867261,
+          5.148319266048258,
+          6.082522036693798,
+          0.1,
+          2.1505467477595577,
+          13.09201831919621,
+          5.911193101375676,
+          0.1
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 7,
+        "objective": 3284.3553151701763,
+        "design_variables": [
+          5.902757654896819,
+          3.1982306171028765,
+          16.555634977860095,
+          2.1180508058791183,
+          3.9072645714266683,
+          3.3124313634299565,
+          11.64633033756932,
+          1.5913251292902704,
+          4.2339456801412885,
+          2.869673918004983
+        ],
+        "basin_size": 1
+      },
+      {
+        "rank": 8,
+        "objective": 3911.488385971243,
+        "design_variables": [
+          16.572260955392395,
+          6.754633948297648,
+          13.564756345149307,
+          12.865818590866507,
+          2.7917409259209496,
+          3.765762511910326,
+          8.95828747558361,
+          7.15376657443374,
+          7.4331725394326815,
+          5.260286597847972
+        ],
+        "basin_size": 1
+      }
+    ],
+    "pso_recommendation": {
+      "recommended": {
+        "w": 0.57,
+        "c1": 1.306,
+        "c2": 1.694
+      },
+      "recommended_sum_c1_c2": 3.0,
+      "recommended_swarm_size": 125,
+      "recommended_iters": 370,
+      "schedule": {
+        "phase_1_explore": {
+          "w": 0.6200000000000001,
+          "c1": 1.2064516129032257,
+          "c2": 1.793548387096774
+        },
+        "phase_2_refine": {
+          "w": 0.52,
+          "c1": 1.4064516129032258,
+          "c2": 1.593548387096774
+        },
+        "switch_fraction_of_iters": 0.6
+      },
+      "rationale": [
+        "Multimodality: raise social pull for swarm consensus across local basins.",
+        "Narrow basin: reduce inertia and retain cognitive pull for local refinement.",
+        "Short autocorrelation length: lower inertia to avoid overshoot.",
+        "High information content: increase exploitation pressure after discovery.",
+        "Swarm size 125: 10\u00d7dim=100 base +15 multimodal +10 narrow, clipped to [30, 150].",
+        "Iterations 370: 200 base +60 multimodal +60 narrow +50 ruggedness, clipped to [150, 600]."
+      ]
+    },
+    "analysis_runtime_seconds": 14.4142218
+  }
+]
