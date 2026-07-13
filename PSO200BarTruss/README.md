@@ -29,16 +29,22 @@ Continuous-size 200-bar planar truss benchmark based on the attached topology an
 
 The shared analysis tooling now exposes this problem as `truss200_continuous`.
 
+Windows PowerShell note: this machine uses the full Python executable path instead of the `python` alias. If `python` is blocked by App Execution Aliases, run the commands below with the local Python 3.12 executable:
+
+```powershell
+$python = "$env:LocalAppData\Programs\Python\Python312\python.exe"
+```
+
 Landscape analysis:
 
-```bash
-python "TrussLandscapeAnalysis/run_all_truss_landscapes.py" --problems truss200_continuous
+```powershell
+& $python "TrussLandscapeAnalysis/run_all_truss_landscapes.py" --problems truss200_continuous
 ```
 
 Fixed-coefficient PSO using the landscape recommendation:
 
-```bash
-python "PSO FEA/run_pso_fea.py" --problem truss200_continuous --coeff-mode fixed
+```powershell
+& $python "PSO FEA/run_pso_fea.py" --problem truss200_continuous --coeff-mode fixed
 ```
 
 Outputs are written to the shared results folders:
