@@ -1,0 +1,29 @@
+Schwefel 1.2 Landscape Report
+=============================
+
+Classification: multimodal, narrow-basin
+Autocorrelation length: 5.020
+Information content H(eps=0.05): 0.857
+LON nodes: 5
+LON edge density: 0.250
+Basin width median (norm): 0.0304
+
+Recommended PSO coefficients:
+w=0.570, c1=1.333, c2=1.667
+Recommended swarm size: 135
+Recommended iterations: 370
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+- High information content: increase exploitation pressure after discovery.
+- Very narrow basin estimate: damp momentum and increase pbest guidance.
+- Swarm size 135: 10×dim=100 base +20 multimodal +15 narrow, clipped to [30, 150].
+- Iterations 370: 200 base +80 multimodal +90 narrow, clipped to [150, 600].
+
+Generated plots:
+- bench09_schwefel_12_autocorr.png
+- bench09_schwefel_12_information_content.png
+- bench09_schwefel_12_basins_map.png
+- bench09_schwefel_12_lon_basins.png

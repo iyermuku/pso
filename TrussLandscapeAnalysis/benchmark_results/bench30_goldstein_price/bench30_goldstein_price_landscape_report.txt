@@ -1,0 +1,27 @@
+Goldstein-Price Landscape Report
+================================
+
+Classification: multimodal
+Autocorrelation length: 7.955
+Information content H(eps=0.05): 0.880
+LON nodes: 5
+LON edge density: 0.250
+Basin width median (norm): 0.1065
+
+Recommended PSO coefficients:
+w=0.680, c1=1.250, c2=1.750
+Recommended swarm size: 45
+Recommended iterations: 310
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 45: 10×dim=20 base +20 multimodal +5 narrow, clipped to [30, 150].
+- Iterations 310: 200 base +80 multimodal +30 narrow, clipped to [150, 600].
+
+Generated plots:
+- bench30_goldstein_price_autocorr.png
+- bench30_goldstein_price_information_content.png
+- bench30_goldstein_price_basins_map.png
+- bench30_goldstein_price_lon_basins.png

@@ -1,0 +1,28 @@
+Griewank Landscape Report
+=========================
+
+Classification: multimodal, smooth-macro
+Autocorrelation length: 15.116
+Information content H(eps=0.05): 0.708
+LON nodes: 5
+LON edge density: 0.200
+Basin width median (norm): 0.5000
+
+Recommended PSO coefficients:
+w=0.730, c1=1.250, c2=1.750
+Recommended swarm size: 115
+Recommended iterations: 260
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Smooth macro-landscape: slightly higher inertia supports broader traversal.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 115: 10×dim=100 base +15 multimodal, clipped to [30, 150].
+- Iterations 260: 200 base +60 multimodal, clipped to [150, 600].
+
+Generated plots:
+- bench13_griewank_autocorr.png
+- bench13_griewank_information_content.png
+- bench13_griewank_basins_map.png
+- bench13_griewank_lon_basins.png

@@ -1,0 +1,28 @@
+Levy Landscape Report
+=====================
+
+Classification: multimodal
+Autocorrelation length: 3.438
+Information content H(eps=0.05): 0.760
+LON nodes: 5
+LON edge density: 0.300
+Basin width median (norm): 0.5000
+
+Recommended PSO coefficients:
+w=0.650, c1=1.250, c2=1.750
+Recommended swarm size: 120
+Recommended iterations: 280
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 120: 10×dim=100 base +20 multimodal, clipped to [30, 150].
+- Iterations 280: 200 base +80 multimodal, clipped to [150, 600].
+
+Generated plots:
+- bench14_levy_autocorr.png
+- bench14_levy_information_content.png
+- bench14_levy_basins_map.png
+- bench14_levy_lon_basins.png

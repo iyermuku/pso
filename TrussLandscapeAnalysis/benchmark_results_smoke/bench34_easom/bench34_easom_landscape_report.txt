@@ -1,0 +1,27 @@
+Easom Landscape Report
+======================
+
+Classification: multimodal, smooth-macro
+Autocorrelation length: 999999.500
+Information content H(eps=0.05): -0.000
+LON nodes: 5
+LON edge density: 0.050
+Basin width median (norm): 0.5000
+
+Recommended PSO coefficients:
+w=0.730, c1=1.250, c2=1.700
+Recommended swarm size: 30
+Recommended iterations: 240
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Smooth macro-landscape: slightly higher inertia supports broader traversal.
+- Swarm size 30: 10×dim=20 base +10 multimodal, clipped to [30, 150].
+- Iterations 240: 200 base +40 multimodal, clipped to [150, 600].
+
+Generated plots:
+- bench34_easom_autocorr.png
+- bench34_easom_information_content.png
+- bench34_easom_basins_map.png
+- bench34_easom_lon_basins.png

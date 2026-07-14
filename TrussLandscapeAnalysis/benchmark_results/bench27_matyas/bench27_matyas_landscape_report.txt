@@ -1,0 +1,27 @@
+Matyas Landscape Report
+=======================
+
+Classification: smooth-macro
+Autocorrelation length: 8.154
+Information content H(eps=0.05): 0.795
+LON nodes: 1
+LON edge density: 0.000
+Basin width median (norm): 0.5000
+
+Recommended PSO coefficients:
+w=0.730, c1=1.350, c2=1.600
+Recommended swarm size: 30
+Recommended iterations: 250
+Detected local optima (LON centers): 1
+
+Reasoning:
+- Smooth macro-landscape: slightly higher inertia supports broader traversal.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 30: 10×dim=20 base +5 multimodal +5 narrow, clipped to [30, 150].
+- Iterations 250: 200 base +20 multimodal +30 narrow, clipped to [150, 600].
+
+Generated plots:
+- bench27_matyas_autocorr.png
+- bench27_matyas_information_content.png
+- bench27_matyas_basins_map.png
+- bench27_matyas_lon_basins.png

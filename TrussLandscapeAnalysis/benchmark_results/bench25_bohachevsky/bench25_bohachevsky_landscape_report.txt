@@ -1,0 +1,28 @@
+Bohachevsky Landscape Report
+============================
+
+Classification: multimodal, smooth-macro
+Autocorrelation length: 9.572
+Information content H(eps=0.05): 0.762
+LON nodes: 5
+LON edge density: 0.550
+Basin width median (norm): 0.0431
+
+Recommended PSO coefficients:
+w=0.730, c1=1.250, c2=1.750
+Recommended swarm size: 45
+Recommended iterations: 310
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Smooth macro-landscape: slightly higher inertia supports broader traversal.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 45: 10×dim=20 base +20 multimodal +5 narrow, clipped to [30, 150].
+- Iterations 310: 200 base +80 multimodal +30 narrow, clipped to [150, 600].
+
+Generated plots:
+- bench25_bohachevsky_autocorr.png
+- bench25_bohachevsky_information_content.png
+- bench25_bohachevsky_basins_map.png
+- bench25_bohachevsky_lon_basins.png

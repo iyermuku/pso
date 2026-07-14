@@ -1,0 +1,28 @@
+Schwefel 2.22 Landscape Report
+==============================
+
+Classification: multimodal
+Autocorrelation length: 1.979
+Information content H(eps=0.05): 0.923
+LON nodes: 5
+LON edge density: 0.200
+Basin width median (norm): 0.4048
+
+Recommended PSO coefficients:
+w=0.650, c1=1.250, c2=1.750
+Recommended swarm size: 120
+Recommended iterations: 340
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 120: 10×dim=100 base +15 multimodal +5 narrow, clipped to [30, 150].
+- Iterations 340: 200 base +60 multimodal +30 narrow +50 ruggedness, clipped to [150, 600].
+
+Generated plots:
+- bench08_schwefel_222_autocorr.png
+- bench08_schwefel_222_information_content.png
+- bench08_schwefel_222_basins_map.png
+- bench08_schwefel_222_lon_basins.png

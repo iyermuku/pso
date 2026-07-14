@@ -1,0 +1,28 @@
+Rastrigin Landscape Report
+==========================
+
+Classification: multimodal
+Autocorrelation length: 0.489
+Information content H(eps=0.05): 0.754
+LON nodes: 5
+LON edge density: 0.400
+Basin width median (norm): 0.1065
+
+Recommended PSO coefficients:
+w=0.650, c1=1.250, c2=1.750
+Recommended swarm size: 125
+Recommended iterations: 360
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- High information content: increase exploitation pressure after discovery.
+- Swarm size 125: 10×dim=100 base +20 multimodal +5 narrow, clipped to [30, 150].
+- Iterations 360: 200 base +80 multimodal +30 narrow +50 ruggedness, clipped to [150, 600].
+
+Generated plots:
+- bench11_rastrigin_autocorr.png
+- bench11_rastrigin_information_content.png
+- bench11_rastrigin_basins_map.png
+- bench11_rastrigin_lon_basins.png

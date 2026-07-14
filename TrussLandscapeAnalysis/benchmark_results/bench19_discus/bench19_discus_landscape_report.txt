@@ -1,0 +1,29 @@
+Discus Landscape Report
+=======================
+
+Classification: multimodal, smooth-macro, narrow-basin
+Autocorrelation length: 17.236
+Information content H(eps=0.05): 0.816
+LON nodes: 5
+LON edge density: 0.400
+Basin width median (norm): 0.0050
+
+Recommended PSO coefficients:
+w=0.570, c1=1.333, c2=1.667
+Recommended swarm size: 135
+Recommended iterations: 370
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+- High information content: increase exploitation pressure after discovery.
+- Very narrow basin estimate: damp momentum and increase pbest guidance.
+- Swarm size 135: 10×dim=100 base +20 multimodal +15 narrow, clipped to [30, 150].
+- Iterations 370: 200 base +80 multimodal +90 narrow, clipped to [150, 600].
+
+Generated plots:
+- bench19_discus_autocorr.png
+- bench19_discus_information_content.png
+- bench19_discus_basins_map.png
+- bench19_discus_lon_basins.png

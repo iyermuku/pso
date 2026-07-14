@@ -1,0 +1,30 @@
+Alpine 2 Landscape Report
+=========================
+
+Classification: multimodal, narrow-basin
+Autocorrelation length: 0.708
+Information content H(eps=0.05): 0.965
+LON nodes: 5
+LON edge density: 0.000
+Basin width median (norm): 0.0304
+
+Recommended PSO coefficients:
+w=0.540, c1=1.333, c2=1.667
+Recommended swarm size: 130
+Recommended iterations: 400
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- High information content: increase exploitation pressure after discovery.
+- Very narrow basin estimate: damp momentum and increase pbest guidance.
+- Swarm size 130: 10×dim=100 base +15 multimodal +15 narrow, clipped to [30, 150].
+- Iterations 400: 200 base +60 multimodal +90 narrow +50 ruggedness, clipped to [150, 600].
+
+Generated plots:
+- bench17_alpine2_autocorr.png
+- bench17_alpine2_information_content.png
+- bench17_alpine2_basins_map.png
+- bench17_alpine2_lon_basins.png

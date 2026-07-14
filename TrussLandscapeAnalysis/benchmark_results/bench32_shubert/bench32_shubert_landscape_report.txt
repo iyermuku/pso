@@ -1,0 +1,30 @@
+Shubert Landscape Report
+========================
+
+Classification: multimodal, narrow-basin
+Autocorrelation length: 0.550
+Information content H(eps=0.05): 0.819
+LON nodes: 5
+LON edge density: 0.400
+Basin width median (norm): 0.0177
+
+Recommended PSO coefficients:
+w=0.540, c1=1.333, c2=1.667
+Recommended swarm size: 55
+Recommended iterations: 420
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Narrow basin: reduce inertia and retain cognitive pull for local refinement.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- High information content: increase exploitation pressure after discovery.
+- Very narrow basin estimate: damp momentum and increase pbest guidance.
+- Swarm size 55: 10×dim=20 base +20 multimodal +15 narrow, clipped to [30, 150].
+- Iterations 420: 200 base +80 multimodal +90 narrow +50 ruggedness, clipped to [150, 600].
+
+Generated plots:
+- bench32_shubert_autocorr.png
+- bench32_shubert_information_content.png
+- bench32_shubert_basins_map.png
+- bench32_shubert_lon_basins.png

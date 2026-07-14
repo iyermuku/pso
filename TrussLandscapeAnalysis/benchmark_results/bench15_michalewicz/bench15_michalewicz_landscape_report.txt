@@ -1,0 +1,27 @@
+Michalewicz Landscape Report
+============================
+
+Classification: multimodal
+Autocorrelation length: 0.837
+Information content H(eps=0.05): 0.556
+LON nodes: 5
+LON edge density: 0.200
+Basin width median (norm): 0.5000
+
+Recommended PSO coefficients:
+w=0.650, c1=1.250, c2=1.700
+Recommended swarm size: 115
+Recommended iterations: 310
+Detected local optima (LON centers): 5
+
+Reasoning:
+- Multimodality: raise social pull for swarm consensus across local basins.
+- Short autocorrelation length: lower inertia to avoid overshoot.
+- Swarm size 115: 10×dim=100 base +15 multimodal, clipped to [30, 150].
+- Iterations 310: 200 base +60 multimodal +50 ruggedness, clipped to [150, 600].
+
+Generated plots:
+- bench15_michalewicz_autocorr.png
+- bench15_michalewicz_information_content.png
+- bench15_michalewicz_basins_map.png
+- bench15_michalewicz_lon_basins.png

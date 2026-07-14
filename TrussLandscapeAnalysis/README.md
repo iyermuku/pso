@@ -206,10 +206,22 @@ From repository root:
 python TrussLandscapeAnalysis/run_all_truss_landscapes.py
 ```
 
+Benchmark functions use the same landscape engine through a separate runner:
+
+```bash
+python TrussLandscapeAnalysis/run_all_benchmark_landscapes.py
+```
+
 Run one problem only:
 
 ```bash
 python TrussLandscapeAnalysis/run_all_truss_landscapes.py --problems truss200_continuous
+```
+
+Run a subset of benchmark functions:
+
+```bash
+python TrussLandscapeAnalysis/run_all_benchmark_landscapes.py --problems bench01_sphere,bench34_easom
 ```
 
 Important options:
@@ -270,6 +282,15 @@ Comparative files in `TrussLandscapeAnalysis/results/`:
 - `comparative_landscape_report.md`
 - `comparison_landscape_scores.png`
 - `comparison_ruggedness_lon.png`
+
+Benchmark analysis outputs are written to `TrussLandscapeAnalysis/benchmark_results/`:
+
+- `all_benchmark_metrics.json`
+- `comparative_benchmark_report.md`
+- `benchmark_landscape_scores.png`
+- `benchmark_ruggedness_lon.png`
+- `comparison_ruggedness_lon.png`
+- [benchmark_landscape_summary.md](benchmark_landscape_summary.md)
 
 The comparative markdown report now also includes cache columns (`Cache Hit %`, `Unique Evals`).
 
