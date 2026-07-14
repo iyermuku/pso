@@ -151,71 +151,77 @@ def _salomon(x: np.ndarray) -> float:
     return float(1.0 - np.cos(2.0 * np.pi * r) + 0.1 * r)
 
 
+def _xy(x: np.ndarray) -> tuple[float, float]:
+    if len(x) < 2:
+        raise ValueError("Benchmark function requires at least 2 dimensions")
+    return float(x[0]), float(x[1])
+
+
 def _bohachevsky(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float(x1 * x1 + 2.0 * x2 * x2 - 0.3 * np.cos(3.0 * np.pi * x1) - 0.4 * np.cos(4.0 * np.pi * x2) + 0.7)
 
 
 def _booth(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float((x1 + 2.0 * x2 - 7.0) ** 2 + (2.0 * x1 + x2 - 5.0) ** 2)
 
 
 def _matyas(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float(0.26 * (x1 * x1 + x2 * x2) - 0.48 * x1 * x2)
 
 
 def _three_hump_camel(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float(2.0 * x1 * x1 - 1.05 * x1**4 + x1**6 / 6.0 + x1 * x2 + x2 * x2)
 
 
 def _six_hump_camel(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float((4.0 - 2.1 * x1 * x1 + x1**4 / 3.0) * x1 * x1 + x1 * x2 + (-4.0 + 4.0 * x2 * x2) * x2 * x2)
 
 
 def _goldstein_price(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     a = 1.0 + (x1 + x2 + 1.0) ** 2 * (19.0 - 14.0 * x1 + 3.0 * x1**2 - 14.0 * x2 + 6.0 * x1 * x2 + 3.0 * x2**2)
     b = 30.0 + (2.0 * x1 - 3.0 * x2) ** 2 * (18.0 - 32.0 * x1 + 12.0 * x1**2 + 48.0 * x2 - 36.0 * x1 * x2 + 27.0 * x2**2)
     return float(a * b)
 
 
 def _branin(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     a = x2 - 5.1 / (4.0 * np.pi**2) * x1**2 + 5.0 * x1 / np.pi - 6.0
     b = 10.0 * (1.0 - 1.0 / (8.0 * np.pi)) * np.cos(x1)
     return float(a * a + b + 10.0)
 
 
 def _shubert(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     s1 = np.sum([i * np.cos((i + 1.0) * x1 + i) for i in range(1, 6)])
     s2 = np.sum([i * np.cos((i + 1.0) * x2 + i) for i in range(1, 6)])
     return float(s1 * s2)
 
 
 def _himmelblau(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float((x1 * x1 + x2 - 11.0) ** 2 + (x1 + x2 * x2 - 7.0) ** 2)
 
 
 def _easom(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     return float(-np.cos(x1) * np.cos(x2) * np.exp(-((x1 - np.pi) ** 2 + (x2 - np.pi) ** 2)))
 
 
 def _cross_in_tray(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     term = np.abs(100.0 - np.sqrt(x1 * x1 + x2 * x2) / np.pi)
     inner = np.abs(np.sin(x1) * np.sin(x2) * np.exp(term))
     return float(-0.0001 * (inner + 1.0) ** 0.1)
 
 
 def _holder_table(x: np.ndarray) -> float:
-    x1, x2 = x
+    x1, x2 = _xy(x)
     term = np.abs(1.0 - np.sqrt(x1 * x1 + x2 * x2) / np.pi)
     return float(-np.abs(np.sin(x1) * np.cos(x2) * np.exp(term)))
 
@@ -226,41 +232,41 @@ def get_all_benchmark_problems() -> list[LandscapeProblem]:
     def add(problem_id: str, label: str, lo, hi, fn) -> None:
         problems.append(_problem(problem_id, label, lo, hi, fn))
 
-    add("bench01_sphere", "Sphere", *_bounds(-5.12, 5.12, 10), _sphere)
-    add("bench02_ellipsoid", "Ellipsoid", *_bounds(-5.12, 5.12, 10), _ellipsoid)
-    add("bench03_sum_different_powers", "Sum of Different Powers", *_bounds(-1.0, 1.0, 10), _sum_of_different_powers)
-    add("bench04_zakharov", "Zakharov", *_bounds(-5.0, 10.0, 10), _zakharov)
-    add("bench05_rosenbrock", "Rosenbrock", *_bounds(-2.048, 2.048, 10), _rosenbrock)
-    add("bench06_step", "Step", *_bounds(-5.12, 5.12, 10), _step)
-    add("bench07_quartic", "Quartic", *_bounds(-1.28, 1.28, 10), _quartic)
-    add("bench08_schwefel_222", "Schwefel 2.22", *_bounds(-10.0, 10.0, 10), _schwefel_222)
-    add("bench09_schwefel_12", "Schwefel 1.2", *_bounds(-100.0, 100.0, 10), _schwefel_12)
-    add("bench10_schwefel_221", "Schwefel 2.21", *_bounds(-100.0, 100.0, 10), _schwefel_221)
-    add("bench11_rastrigin", "Rastrigin", *_bounds(-5.12, 5.12, 10), _rastrigin)
-    add("bench12_ackley", "Ackley", *_bounds(-32.768, 32.768, 10), _ackley)
-    add("bench13_griewank", "Griewank", *_bounds(-600.0, 600.0, 10), _griewank)
-    add("bench14_levy", "Levy", *_bounds(-10.0, 10.0, 10), _levy)
-    add("bench15_michalewicz", "Michalewicz", *_bounds(0.0, np.pi, 10), _michalewicz)
-    add("bench16_alpine1", "Alpine 1", *_bounds(-10.0, 10.0, 10), _alpine1)
-    add("bench17_alpine2", "Alpine 2", *_bounds(0.0, 10.0, 10), _alpine2)
-    add("bench18_bent_cigar", "Bent Cigar", *_bounds(-10.0, 10.0, 10), _bent_cigar)
-    add("bench19_discus", "Discus", *_bounds(-10.0, 10.0, 10), _discus)
-    add("bench20_weierstrass", "Weierstrass", *_bounds(-0.5, 0.5, 10), _weierstrass)
-    add("bench21_happycat", "HappyCat", *_bounds(-10.0, 10.0, 10), _happycat)
-    add("bench22_hgbat", "HGBat", *_bounds(-10.0, 10.0, 10), _hgbat)
-    add("bench23_qing", "Qing", *_bounds(-500.0, 500.0, 10), _qing)
-    add("bench24_salomon", "Salomon", *_bounds(-100.0, 100.0, 10), _salomon)
-    add("bench25_bohachevsky", "Bohachevsky", *_bounds([-100.0, -100.0], [100.0, 100.0]), _bohachevsky)
-    add("bench26_booth", "Booth", *_bounds([-10.0, -10.0], [10.0, 10.0]), _booth)
-    add("bench27_matyas", "Matyas", *_bounds([-10.0, -10.0], [10.0, 10.0]), _matyas)
-    add("bench28_three_hump_camel", "Three-hump Camel", *_bounds([-5.0, -5.0], [5.0, 5.0]), _three_hump_camel)
-    add("bench29_six_hump_camel", "Six-hump Camel", *_bounds([-5.0, -5.0], [5.0, 5.0]), _six_hump_camel)
-    add("bench30_goldstein_price", "Goldstein-Price", *_bounds([-2.0, -2.0], [2.0, 2.0]), _goldstein_price)
-    add("bench31_branin", "Branin", *_bounds([-5.0, 0.0], [10.0, 15.0]), _branin)
-    add("bench32_shubert", "Shubert", *_bounds([-10.0, -10.0], [10.0, 10.0]), _shubert)
-    add("bench33_himmelblau", "Himmelblau", *_bounds([-6.0, -6.0], [6.0, 6.0]), _himmelblau)
-    add("bench34_easom", "Easom", *_bounds([-100.0, -100.0], [100.0, 100.0]), _easom)
-    add("bench35_cross_in_tray", "Cross-in-Tray", *_bounds([-10.0, -10.0], [10.0, 10.0]), _cross_in_tray)
-    add("bench36_holder_table", "Holder Table", *_bounds([-10.0, -10.0], [10.0, 10.0]), _holder_table)
+    add("bench01_sphere", "Sphere", *_bounds(-5.12, 5.12, 2), _sphere)
+    add("bench02_ellipsoid", "Ellipsoid", *_bounds(-5.12, 5.12, 2), _ellipsoid)
+    add("bench03_sum_different_powers", "Sum of Different Powers", *_bounds(-1.0, 1.0, 2), _sum_of_different_powers)
+    add("bench04_zakharov", "Zakharov", *_bounds(-5.0, 10.0, 2), _zakharov)
+    add("bench05_rosenbrock", "Rosenbrock", *_bounds(-2.048, 2.048, 2), _rosenbrock)
+    add("bench06_step", "Step", *_bounds(-5.12, 5.12, 2), _step)
+    add("bench07_quartic", "Quartic", *_bounds(-1.28, 1.28, 2), _quartic)
+    add("bench08_schwefel_222", "Schwefel 2.22", *_bounds(-10.0, 10.0, 2), _schwefel_222)
+    add("bench09_schwefel_12", "Schwefel 1.2", *_bounds(-100.0, 100.0, 2), _schwefel_12)
+    add("bench10_schwefel_221", "Schwefel 2.21", *_bounds(-100.0, 100.0, 2), _schwefel_221)
+    add("bench11_rastrigin", "Rastrigin", *_bounds(-5.12, 5.12, 2), _rastrigin)
+    add("bench12_ackley", "Ackley", *_bounds(-32.768, 32.768, 2), _ackley)
+    add("bench13_griewank", "Griewank", *_bounds(-600.0, 600.0, 2), _griewank)
+    add("bench14_levy", "Levy", *_bounds(-10.0, 10.0, 2), _levy)
+    add("bench15_michalewicz", "Michalewicz", *_bounds(0.0, np.pi, 2), _michalewicz)
+    add("bench16_alpine1", "Alpine 1", *_bounds(-10.0, 10.0, 2), _alpine1)
+    add("bench17_alpine2", "Alpine 2", *_bounds(0.0, 10.0, 2), _alpine2)
+    add("bench18_bent_cigar", "Bent Cigar", *_bounds(-10.0, 10.0, 3), _bent_cigar)
+    add("bench19_discus", "Discus", *_bounds(-10.0, 10.0, 3), _discus)
+    add("bench20_weierstrass", "Weierstrass", *_bounds(-0.5, 0.5, 4), _weierstrass)
+    add("bench21_happycat", "HappyCat", *_bounds(-10.0, 10.0, 4), _happycat)
+    add("bench22_hgbat", "HGBat", *_bounds(-10.0, 10.0, 4), _hgbat)
+    add("bench23_qing", "Qing", *_bounds(-500.0, 500.0, 4), _qing)
+    add("bench24_salomon", "Salomon", *_bounds(-100.0, 100.0, 5), _salomon)
+    add("bench25_bohachevsky", "Bohachevsky", *_bounds(-100.0, 100.0, 5), _bohachevsky)
+    add("bench26_booth", "Booth", *_bounds(-10.0, 10.0, 5), _booth)
+    add("bench27_matyas", "Matyas", *_bounds(-10.0, 10.0, 10), _matyas)
+    add("bench28_three_hump_camel", "Three-hump Camel", *_bounds(-5.0, 5.0, 10), _three_hump_camel)
+    add("bench29_six_hump_camel", "Six-hump Camel", *_bounds(-5.0, 5.0, 10), _six_hump_camel)
+    add("bench30_goldstein_price", "Goldstein-Price", *_bounds(-2.0, 2.0, 10), _goldstein_price)
+    add("bench31_branin", "Branin", *_bounds(-5.0, 10.0, 30), _branin)
+    add("bench32_shubert", "Shubert", *_bounds(-10.0, 10.0, 30), _shubert)
+    add("bench33_himmelblau", "Himmelblau", *_bounds(-6.0, 6.0, 30), _himmelblau)
+    add("bench34_easom", "Easom", *_bounds(-100.0, 100.0, 30), _easom)
+    add("bench35_cross_in_tray", "Cross-in-Tray", *_bounds(-10.0, 10.0, 30), _cross_in_tray)
+    add("bench36_holder_table", "Holder Table", *_bounds(-10.0, 10.0, 30), _holder_table)
 
     return problems
