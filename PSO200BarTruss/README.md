@@ -28,7 +28,7 @@ Continuous-size 200-bar planar truss benchmark based on the attached topology an
 ## Running the analyses
 
 The shared analysis tooling now exposes this problem as `truss200_continuous`.
-
+ 
 Windows PowerShell note: this machine uses the full Python executable path instead of the `python` alias. If `python` is blocked by App Execution Aliases, run the commands below with the local Python 3.12 executable:
 
 ```powershell
