@@ -41,6 +41,14 @@
 
 Results were generated with the benchmark-landscape summary settings in [TrussLandscapeAnalysis/benchmark_landscape_summary.md](../benchmark_landscape_summary.md).
 
+## Particle Evolution
+
+The particle paths for two representative 2D benchmark functions are rendered in:
+
+- [particle_evolution_two_benchmarks.png](particle_evolution_two_benchmarks.png)
+
+The figure uses Sphere and Rastrigin, with trajectories sampled from the tracked PSO history so the swarm motion stays readable.
+
 ## Short Interpretation
 
 - Results reflect the corrected benchmark dimensions and a full rerun of all 36 functions.
