@@ -6,6 +6,8 @@ Outputs:
 The plot includes:
 - Node markers with node IDs
 - Element lines with element IDs
+- Applied load arrows for the active load case
+- Pinned boundary conditions at the support nodes
 - Global coordinate system arrows (x, y, z)
 """
 
@@ -38,9 +40,21 @@ def _set_equal_axes_3d(ax, points: np.ndarray) -> None:
 def make_plot(save_path: Path) -> None:
     nodes = T.node_coordinates()
     elems = T.element_connectivity()
+    loads = T.applied_loads()[0]
 
     fig = plt.figure(figsize=(11, 8), dpi=150)
     ax = fig.add_subplot(111, projection="3d")
+
+    # Scale applied load arrows so they remain readable in the 3D view.
+    load_magnitudes = []
+    for node_id in range(1, T.N_NODES + 1):
+        base = 3 * (node_id - 1)
+        vec = loads[base : base + 3]
+        mag = float(np.linalg.norm(vec))
+        if mag > 0:
+            load_magnitudes.append(mag)
+    max_load = max(load_magnitudes) if load_magnitudes else 1.0
+    load_scale = 55.0 / max_load
 
     # Draw elements and element labels.
     for e_id, (n1, n2) in enumerate(elems, start=1):
@@ -69,6 +83,35 @@ def make_plot(save_path: Path) -> None:
 
     for n_id, p in enumerate(nodes, start=1):
         ax.text(p[0], p[1], p[2] + 6.0, str(n_id), color="darkgreen", fontsize=9)
+
+    # Draw applied loads for the active load case.
+    for n_id, p in enumerate(nodes, start=1):
+        base = 3 * (n_id - 1)
+        vec = loads[base : base + 3]
+        if np.allclose(vec, 0.0):
+            continue
+        dx, dy, dz = vec * load_scale
+        ax.quiver(
+            p[0],
+            p[1],
+            p[2],
+            dx,
+            dy,
+            dz,
+            color="darkorange",
+            arrow_length_ratio=0.16,
+            linewidth=2.2,
+        )
+        label_offset = np.array([dx, dy, dz], dtype=float)
+        label_pos = p + 1.08 * label_offset
+        ax.text(
+            label_pos[0],
+            label_pos[1],
+            label_pos[2],
+            f"({vec[0]:.0f}, {vec[1]:.0f}, {vec[2]:.0f})",
+            color="saddlebrown",
+            fontsize=8,
+        )
 
     # Draw global coordinate system arrows near one base corner.
     origin = np.array([-130.0, -130.0, 0.0])
