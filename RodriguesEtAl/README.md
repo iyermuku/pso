@@ -260,6 +260,143 @@ and satisfies
 M V_null ≈ 0
 ```
 
+## Optimization
+
+The optimization comparison is implemented in `optimize_truss.py`. It compares
+Steepest Descent, Conjugate Gradient, Marquardt, and DFP using the same
+bounded, normalized design space.
+
+### Design variables
+
+The optimizer uses 11 design variables:
+
+```text
+z = [A1, A2, ..., A11]
+```
+
+`A1` through `A11` are member cross-sectional areas in cm^2. The undeformed
+geometry is fixed at `y4 = y5 = y6 = 200 cm`; these coordinates are not design
+variables.
+
+The area bounds are:
+
+```text
+A_MIN <= Ai <= A_MAX
+```
+
+The requested initial design is:
+
+```text
+A1 = ... = A11 = 0.1 cm^2
+```
+
+Internally, each physical variable is mapped to a normalized variable
+`z[i]` in `[0, 1]`. The physical design is recovered by
+
+```python
+physical = LOWER + z * (UPPER - LOWER)
+```
+
+and the code clips normalized trial points to `[0, 1]` to preserve the bounds.
+
+### Objective and penalty
+
+The optimizer minimizes the scalar objective
+
+```text
+objective = mass_term + stress_penalty_term + displacement_penalty_term
+```
+
+The terms are defined as
+
+```text
+mass_term = mass / 1000
+
+stress_penalty_term = PENALTY *
+                      (max(0, max_tensile_stress - S_ALLOW) / S_ALLOW)^2
+
+displacement_penalty_term = PENALTY * sum((height_violation / 295)^2)
+```
+
+`mass` is returned by `truss11.evaluate()` in kg, and `max_tensile_stress` is
+the maximum positive axial member stress in kN/cm^2. Compression is not part
+of this optimization constraint. The current allowable stress is
+`S_ALLOW = 6 kN/cm^2` (60 MPa), and the default penalty weight is
+`PENALTY = 100`.
+
+After solving the finite-element system, the deformed vertical coordinates of
+nodes D, E, and F are computed as
+
+```text
+deformed_heights = [200, 200, 200] + [v4, v5, v6]
+```
+
+Each deformed height is required to remain in `[5, 300]` cm. A violation is
+the distance outside that interval. The displacement penalty is zero when all
+three deformed heights satisfy the bounds.
+
+The penalty is zero when the stress limit is satisfied. When the limit is
+violated, the penalty grows quadratically with the normalized violation. For
+example, if the stress is twice the allowable value, then
+
+```text
+stress_penalty_term = 100 * ((2.0 - 1.0) / 1.0)^2 = 100
+```
+
+Increasing `PENALTY` makes stress and displacement violations more expensive
+relative to mass; setting it to zero ignores both response constraints. These
+are soft penalties, not hard constraints, so a reported design can still
+violate a response bound.
+
+### Gradient
+
+The gradient is estimated by central finite differences in normalized design
+coordinates. For design variable `i`, the code approximates
+
+```text
+gradient[i] ≈ (objective(z + h ei) - objective(z - h ei)) / (2h)
+```
+
+with `h = 1e-5`, adjusted near the normalized bounds. Each objective call
+increments the `evaluations` counter.
+
+### Projected-gradient convergence
+
+Because the design variables are bounded, convergence is checked with the
+projected gradient rather than the ordinary gradient:
+
+```python
+projected_gradient = z - np.clip(z - gradient, 0.0, 1.0)
+```
+
+This recognizes that a variable at a bound can have a nonzero ordinary
+gradient when its descent direction points outside the feasible interval.
+The methods declare convergence when
+
+```text
+norm(projected_gradient) <= GRAD_TOLERANCE
+```
+
+with the current tolerance equal to `1e-5`.
+
+### Evaluations and iterations
+
+`evaluations` is the number of calls to the objective evaluator. It includes
+calls made during finite-difference gradient calculations and line searches,
+so it is normally much larger than the iteration count.
+
+`iterations` is the number of outer optimization updates performed by a
+method. One iteration generally consists of computing a search direction,
+performing a line search, accepting a new design, and updating the method's
+gradient or Hessian approximation. An iteration can also end when the line
+search cannot find an acceptable feasible step.
+
+The script can be run with:
+
+```text
+python optimize_truss.py
+```
+
 to numerical tolerance.
 
 ## Notes

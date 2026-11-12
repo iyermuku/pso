@@ -23,7 +23,7 @@ import numpy as np
 
 E: float = 20_000.0  # 200 GPa = 20,000 kN/cm^2
 RHO: float = 0.00785  # 7850 kg/m^3 = 0.00785 kg/cm^3
-S_ALLOW: float = 2.5  # 25 MPa = 2.5 kN/cm^2
+S_ALLOW: float = 6.0  # 60 MPa = 6.0 kN/cm^2
 A_MIN: float = 0.10
 A_MAX: float = 30.0
 LOAD_MAG: float = 100.0
